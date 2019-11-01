@@ -73,7 +73,6 @@ public class QLNhanVien implements QLNhanvienimp{
 	@Override
 	public NhanVien getLogin(String id, String pw) {
 		for (NhanVien nhanVien : getDSNV()) {
-			System.out.println(nhanVien);
 			if(nhanVien.getTaiKhoan().getTenTK().equalsIgnoreCase(id) && nhanVien.getTaiKhoan().getMatKhau().equals(pw))
 				return nhanVien;
 		}

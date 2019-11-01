@@ -1,7 +1,5 @@
 package useInterface;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -16,10 +14,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.persistence.EntityManager;
-import javax.persistence.Persistence;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -30,10 +26,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 
 public class Login extends JFrame {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField username;
@@ -41,35 +33,13 @@ public class Login extends JFrame {
 	private static EntityManager em;
 	
 	int xx,xy;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		em = Persistence.createEntityManagerFactory("VinaHome-master").createEntityManager();
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					UIManager.setLookAndFeel("com.jtattoo.plaf.acryl.AcrylLookAndFeel");
-					Login frame = new Login();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the frame.	
-	 */
-	public Login() {
+	 
+	public Login(EntityManager em) {
+		Login.em = em;
 		setBackground(Color.WHITE);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 729, 476);
 		setLocationRelativeTo(null);
-		setUndecorated(true);
-		setVisible(true);
 		
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(255, 255, 240));
@@ -212,7 +182,7 @@ public class Login extends JFrame {
 			NhanVien nv = new QLNhanVien(em).getLogin(id, pw);
 			if(nv != null) {
 				if(nv.getChuVu().equalsIgnoreCase("Tiếp tân"))
-					new UITiepTan(nv).setVisible(true);	
+					new UITiepTan(nv, em).setVisible(true);	
 				dispose();
 			}
 			else
