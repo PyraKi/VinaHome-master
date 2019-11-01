@@ -63,6 +63,18 @@ public class PhieuDichvu {
 		result = prime * result + ((maPhieuDV == null) ? 0 : maPhieuDV.hashCode());
 		return result;
 	}
+	public PhieuDichvu(String maPhieuDV, NhanVien nhanVien, LocalDate ngaylap,
+			List<ChitietPhieuDichvu> dschitietPhieuDichvu, Double thanhtien) {
+		super();
+		this.maPhieuDV = maPhieuDV;
+		this.nhanVien = nhanVien;
+		this.ngaylap = ngaylap;
+		this.dschitietPhieuDichvu = dschitietPhieuDichvu;
+		this.thanhtien = thanhtien;
+	}
+	public PhieuDichvu() {
+		super();
+	}
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -79,19 +91,6 @@ public class PhieuDichvu {
 			return false;
 		return true;
 	}
-	public PhieuDichvu(String maPhieuDV, NhanVien nhanVien, LocalDate ngaylap,
-			List<ChitietPhieuDichvu> dschitietPhieuDichvu, Double thanhtien) {
-		super();
-		this.maPhieuDV = maPhieuDV;
-		this.nhanVien = nhanVien;
-		this.ngaylap = ngaylap;
-		this.dschitietPhieuDichvu = dschitietPhieuDichvu;
-		this.thanhtien = thanhtien;
-	}
-	public PhieuDichvu() {
-		super();
-	}
-	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("PhieuDichvu [maPhieuDV=");

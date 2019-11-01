@@ -54,9 +54,11 @@ public class ChitietPhieuDichvu {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((dichvu == null) ? 0 : dichvu.hashCode());
 		result = prime * result + ((maPhieuDichvu == null) ? 0 : maPhieuDichvu.hashCode());
 		return result;
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -66,6 +68,11 @@ public class ChitietPhieuDichvu {
 		if (getClass() != obj.getClass())
 			return false;
 		ChitietPhieuDichvu other = (ChitietPhieuDichvu) obj;
+		if (dichvu == null) {
+			if (other.dichvu != null)
+				return false;
+		} else if (!dichvu.equals(other.dichvu))
+			return false;
 		if (maPhieuDichvu == null) {
 			if (other.maPhieuDichvu != null)
 				return false;

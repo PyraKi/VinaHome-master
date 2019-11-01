@@ -20,20 +20,27 @@ import javax.swing.table.TableRowSorter;
 
 import com.toedter.calendar.JDateChooser;
 
+import bussinessLayer.QLChitietDichvu;
 import bussinessLayer.QLDiachi;
 import bussinessLayer.QLDichvu;
+import bussinessLayer.QLHoadon;
 import bussinessLayer.QLKhachhang;
+import bussinessLayer.QLPhieuDichvu;
 import bussinessLayer.QLPhong;
 import entity.ChitietPhieuDichvu;
 import entity.DiaChi;
 import entity.Dichvu;
+import entity.Hoadon;
 import entity.KhachHang;
 import entity.NhanVien;
 import entity.PhieuDichvu;
 import entity.Phong;
+import implementsLayer.QLChitietDichvuimp;
 import implementsLayer.QLDiachiimp;
 import implementsLayer.QLDichvuimp;
+import implementsLayer.QLHoadonimp;
 import implementsLayer.QLKhachhangimp;
+import implementsLayer.QLPhieuDichvuimp;
 import implementsLayer.QLPhongimp;
 
 import javax.swing.JLabel;
@@ -98,6 +105,7 @@ public class UITiepTan extends JFrame {
 	private JLabel lbChucvu = new JLabel("Tiếp tân");
 	private JButton btLaphoadon;
 	private JTextField tim = new JTextField();
+	
 	private JButton[] phongs;
 	private JSpinner[] spinners;
 	private JTable tableDSKhachhang;
@@ -132,7 +140,10 @@ public class UITiepTan extends JFrame {
 	private QLKhachhangimp khachhangDAO;
 	private QLDichvuimp dichvuDAO;
 	private QLPhongimp phongDAO;
-	QLDiachiimp diachiDAO;
+	private QLDiachiimp diachiDAO;
+	private QLHoadonimp hoadonDAO;
+	QLChitietDichvuimp chitietdichvuDAO;
+	private QLPhieuDichvuimp phieuDichvuDAO;
 	private NhanVien nhanVien = new NhanVien();
 	private PhieuDichvu phieuDichvu;
 	/**
@@ -146,6 +157,9 @@ public class UITiepTan extends JFrame {
 		dichvuDAO = new QLDichvu(em);
 		phongDAO = new QLPhong(em);
 		diachiDAO = new QLDiachi(em);
+		hoadonDAO = new QLHoadon(em);
+		chitietdichvuDAO = new QLChitietDichvu(em);
+		phieuDichvuDAO = new QLPhieuDichvu(em);
 		
 		setForeground(new Color(255, 255, 255));
 		setBackground(new Color(255, 250, 250));
@@ -403,58 +417,50 @@ public class UITiepTan extends JFrame {
 		/*
 		 * danh sach phong
 		 */
-		border = BorderFactory.createLineBorder(Color.RED);
-		titleBorder = new TitledBorder(border, "Danh sách phòng");
-		titleBorder.setTitleFont(new Font("Times New Roman", Font.BOLD, 26));
-		titleBorder.setTitleColor(Color.RED);
+
+		panel_InfoPhong.setBounds(1113, 11, 788, 78);
+		panel_InfoPhong.setBackground(Color.WHITE);
+		contentPane.add(panel_InfoPhong);
+		panel_InfoPhong.setLayout(null);
+
+		JLabel lblSPhng = new JLabel("Số phòng còn trống:");
+		lblSPhng.setForeground(Color.BLACK);
+		lblSPhng.setFont(new Font("Times New Roman", Font.BOLD, 26));
+		lblSPhng.setBounds(113, 0, 226, 29);
+		panel_InfoPhong.add(lblSPhng);
+
+
+		label_soPhong.setForeground(Color.BLACK);
+		label_soPhong.setFont(new Font("Times New Roman", Font.BOLD, 26));
+		label_soPhong.setBounds(333, 3, 46, 26);
+		panel_InfoPhong.add(label_soPhong);
+
+		JPanel panel_PTrong = new JPanel();
+		panel_PTrong.setBackground(new Color(245, 245, 220));
+		panel_PTrong.setForeground(Color.WHITE);
+		panel_PTrong.setBounds(475, 38, 135, 35);
+		panel_InfoPhong.add(panel_PTrong);
+
+		JLabel lblPhngTrng = new JLabel("Phòng trống");
+		panel_PTrong.add(lblPhngTrng);
+		lblPhngTrng.setFont(new Font("Times New Roman", Font.BOLD, 18));
+
+		JPanel panel_Psua = new JPanel();
+		panel_Psua.setBackground(Color.LIGHT_GRAY);
+		panel_Psua.setForeground(Color.WHITE);
+		panel_Psua.setBounds(643, 38, 135, 35);
+		panel_InfoPhong.add(panel_Psua);
+
+		JLabel lblP = new JLabel("P.Đang sử dụng");
+		panel_Psua.add(lblP);
+		lblP.setFont(new Font("Times New Roman", Font.BOLD, 18));
+
+		cbSapxepPhong.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+		cbSapxepPhong.setModel(new DefaultComboBoxModel<String>(itemsPhong));
+		cbSapxepPhong.setForeground(Color.BLACK);
+		cbSapxepPhong.setBounds(428, 0, 350, 27);
+		panel_InfoPhong.add(cbSapxepPhong);
 		
-				panel_InfoPhong.setBounds(1113, 11, 788, 78);
-				panel_InfoPhong.setBackground(Color.WHITE);
-				contentPane.add(panel_InfoPhong);
-				panel_InfoPhong.setLayout(null);
-				
-				JLabel lblSPhng = new JLabel("Số phòng còn trống:");
-				lblSPhng.setForeground(Color.BLACK);
-				lblSPhng.setFont(new Font("Times New Roman", Font.BOLD, 26));
-				lblSPhng.setBounds(113, 0, 226, 29);
-				panel_InfoPhong.add(lblSPhng);
-				
-				
-				label_soPhong.setForeground(Color.BLACK);
-				label_soPhong.setFont(new Font("Times New Roman", Font.BOLD, 26));
-				label_soPhong.setBounds(333, 3, 46, 26);
-				panel_InfoPhong.add(label_soPhong);
-				
-				JPanel panel_PTrong = new JPanel();
-				panel_PTrong.setBackground(new Color(245, 245, 220));
-				panel_PTrong.setForeground(Color.WHITE);
-				panel_PTrong.setBounds(475, 38, 135, 35);
-				panel_InfoPhong.add(panel_PTrong);
-				
-				JLabel lblPhngTrng = new JLabel("Phòng trống");
-				panel_PTrong.add(lblPhngTrng);
-				lblPhngTrng.setFont(new Font("Times New Roman", Font.BOLD, 18));
-				
-				JPanel panel_Psua = new JPanel();
-				panel_Psua.setBackground(Color.LIGHT_GRAY);
-				panel_Psua.setForeground(Color.WHITE);
-				panel_Psua.setBounds(643, 38, 135, 35);
-				panel_InfoPhong.add(panel_Psua);
-				
-				JLabel lblP = new JLabel("P.Đang sử dụng");
-				panel_Psua.add(lblP);
-				lblP.setFont(new Font("Times New Roman", Font.BOLD, 18));
-			
-				cbSapxepPhong.setFont(new Font("Times New Roman", Font.PLAIN, 18));
-				cbSapxepPhong.setModel(new DefaultComboBoxModel<String>(itemsPhong));
-				cbSapxepPhong.setForeground(Color.BLACK);
-				cbSapxepPhong.setBounds(428, 0, 350, 27);
-				panel_InfoPhong.add(cbSapxepPhong);
-		panel_DanhSachPhong.setBorder(titleBorder);
-		
-		panel_DanhSachPhong.setBackground(Color.WHITE);
-		panel_DanhSachPhong.setBounds(445, 85, 1456, 957);
-		contentPane.add(panel_DanhSachPhong);
 		//Xuất danh sách phòng từ hệ thống
 		xuatDSPhong();
 		
@@ -653,6 +659,17 @@ public class UITiepTan extends JFrame {
 	}
 	
 	public boolean xuatDSPhong() {
+		panel_DanhSachPhong = new JPanel();
+		Border border = BorderFactory.createLineBorder(Color.RED);
+		TitledBorder titleBorder = new TitledBorder(border, "Danh sách phòng");
+		titleBorder.setTitleFont(new Font("Times New Roman", Font.BOLD, 26));
+		titleBorder.setTitleColor(Color.RED);
+		panel_DanhSachPhong.setBorder(titleBorder);
+
+		panel_DanhSachPhong.setBackground(Color.WHITE);
+		panel_DanhSachPhong.setBounds(445, 85, 1456, 957);
+		contentPane.add(panel_DanhSachPhong);
+		
 		List<Phong> dsphongs = phongDAO.getDSPhong();
 		int soPhong = dsphongs.size(),
 				soPhongTrong = 0, index = 0;
@@ -1307,6 +1324,20 @@ public class UITiepTan extends JFrame {
 					
 					updateTableKhachHang();
 				}
+				
+				Hoadon hoadon = new Hoadon();
+				hoadon.setMaHD(getAlphaString(10));
+				hoadon.setNhanVien(nhanVien);
+				hoadon.setKhachHang(khachHang);
+				hoadon.setPhong(phong);
+				if(hoadonDAO.themHoadon(hoadon)) {
+					phong.setTinhtrangPhong("Phòng đặt");
+					int index = phongDAO.getDSPhong().indexOf(phong);
+					phongDAO.suaPhong(phong);
+					JOptionPane.showMessageDialog(null, "Đặt phòng thành công!!");
+					phongs[index].setBackground(Color.decode("#D3D3D3")); //Phòng đang sử dụng
+					dispose();
+				}else JOptionPane.showMessageDialog(null, "Đặt phòng không thành công!!");
 			}
 		}
 		
@@ -1447,14 +1478,15 @@ public class UITiepTan extends JFrame {
 		ChitietPhieuDichvu ctdv = new ChitietPhieuDichvu(phieuDichvu.getMaPhieuDV(), dichvu, value, 0);
 		List<ChitietPhieuDichvu> dsCTDV = phieuDichvu.getDschitietPhieuDichvu();
 		if(value == 1 && !phieuDichvu.getDschitietPhieuDichvu().contains(ctdv)) {
-			phieuDichvu.getDschitietPhieuDichvu().add(ctdv);
+			dsCTDV.add(ctdv);
 		} if(value == 0) {
-			phieuDichvu.getDschitietPhieuDichvu().remove(ctdv);
+			dsCTDV.remove(ctdv);
 		} else {
-			int index = phieuDichvu.getDschitietPhieuDichvu().indexOf(ctdv);
+			int index = dsCTDV.indexOf(ctdv);
 			ctdv.setSoluong(value);
-			phieuDichvu.getDschitietPhieuDichvu().set(index, ctdv);
+			dsCTDV.set(index, ctdv);
 		}
+		phieuDichvu.setDschitietPhieuDichvu(dsCTDV);
 		if(phieuDichvu.getDschitietPhieuDichvu().isEmpty())
 			btLaphoadon.setEnabled(false);
 		else
@@ -1474,21 +1506,34 @@ public class UITiepTan extends JFrame {
 			});
 			tong += thanhTien;
 		}
+		phieuDichvu.setThanhtien(tong);
 		lbtotal.setText(format.format(tong));
 		lbvat.setText(format.format(tong*0.1));
 		lbsum.setText(format.format(tong*0.1 + tong));
 	}
 	
 	public void btactionLapPhieuDichvu() {
-		phieuDichvu = null;
-		for (int i = 0; i < 4; i++)
-			spinners[i].setValue(0);
-		while(dfmodelCTHD.getRowCount() > 0)
-			dfmodelCTHD.removeRow(0);
-		btLaphoadon.setEnabled(false);
-		lbtotal.setText(format.format(0));
-		lbvat.setText(format.format(0));
-		lbsum.setText(format.format(0));
+		phieuDichvu.setNgaylap(LocalDate.now());
+		for (ChitietPhieuDichvu chitietPhieuDichvu : phieuDichvu.getDschitietPhieuDichvu()) {
+			chitietdichvuDAO.themChitietDichvu(chitietPhieuDichvu);
+			Dichvu dv = chitietPhieuDichvu.getDichvu();
+			dv.setSoluong(dichvuDAO.timDichvu(dv.getMaDV()).getSoluong() - chitietPhieuDichvu.getSoluong());
+			dichvuDAO.suaDichvu(dv);
+		}
+		if(phieuDichvuDAO.themPhieuDichvu(phieuDichvu)) {
+			phieuDichvu = null;
+			for (int i = 0; i < 4; i++)
+				spinners[i].setValue(0);
+			while(dfmodelCTHD.getRowCount() > 0)
+				dfmodelCTHD.removeRow(0);
+			btLaphoadon.setEnabled(false);
+			lbtotal.setText(format.format(0));
+			lbvat.setText(format.format(0));
+			lbsum.setText(format.format(0));
+			JOptionPane.showMessageDialog(null, "Lập phiếu dịch vụ thành công!!");
+		}else {
+			JOptionPane.showMessageDialog(null, "Lập phiếu dịch vụ thất bại!!");
+		}
 	}
 	
 	public void updateTableKhachHang(){

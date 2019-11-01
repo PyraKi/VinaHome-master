@@ -15,6 +15,7 @@ public class QLPhieuDichvu implements QLPhieuDichvuimp {
 		this.em = em;
 	}
 	
+	@Override
 	public boolean themPhieuDichvu(PhieuDichvu pdv) {
 		EntityTransaction tr=em.getTransaction();
 		try {
@@ -31,12 +32,14 @@ public class QLPhieuDichvu implements QLPhieuDichvuimp {
 	
 
 	
+	@Override
 	public PhieuDichvu timPhieuDichvu(String mapdv) {
 		return em.find(PhieuDichvu.class, mapdv);
 	}
 	
 
 	
+	@Override
 	public boolean xoaPhieuDichvu(String mapdv) {
 		EntityTransaction tr = em.getTransaction();
 		try {
@@ -52,6 +55,7 @@ public class QLPhieuDichvu implements QLPhieuDichvuimp {
 	}
 	
 	
+	@Override
 	public boolean suaPhieuDichvu(PhieuDichvu pdv) {
 		EntityTransaction tr = em.getTransaction();
 		try {
@@ -66,6 +70,7 @@ public class QLPhieuDichvu implements QLPhieuDichvuimp {
 	}
 
 	
+	@Override
 	public List<PhieuDichvu> getDSPhieuDichvu() {
 		return em.createQuery("from PhieuDichvu pdv",PhieuDichvu.class).getResultList();
 	}

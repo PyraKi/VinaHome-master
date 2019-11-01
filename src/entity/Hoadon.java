@@ -26,6 +26,7 @@ public class Hoadon {
 	@JoinColumn(name="maPhong")
 	private Phong phong;
 	private LocalDate ngayLap;
+	private Double tongTien;
 	public String getMaHD() {
 		return maHD;
 	}
@@ -56,6 +57,12 @@ public class Hoadon {
 	public void setNgayLap(LocalDate ngayLap) {
 		this.ngayLap = ngayLap;
 	}
+	public Double getTongTien() {
+		return tongTien;
+	}
+	public void setTongTien(Double tongTien) {
+		this.tongTien = tongTien;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -79,13 +86,15 @@ public class Hoadon {
 			return false;
 		return true;
 	}
-	public Hoadon(String maHD, NhanVien nhanVien, KhachHang khachHang, Phong phong, LocalDate ngayLap) {
+	public Hoadon(String maHD, NhanVien nhanVien, KhachHang khachHang, Phong phong, LocalDate ngayLap,
+			Double tongTien) {
 		super();
 		this.maHD = maHD;
 		this.nhanVien = nhanVien;
 		this.khachHang = khachHang;
 		this.phong = phong;
 		this.ngayLap = ngayLap;
+		this.tongTien = tongTien;
 	}
 	public Hoadon() {
 		super();
