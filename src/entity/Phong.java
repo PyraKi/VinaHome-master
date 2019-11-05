@@ -29,7 +29,6 @@ public class Phong {
 	private String tinhtrangPhong;
 	private int soNguoiToida; 
 	@OneToMany(fetch=FetchType.LAZY)
-	@JoinColumn(name="maDP")
 	private List<DatPhong> datPhong;
 	public String getMaPhong() {
 		return maPhong;

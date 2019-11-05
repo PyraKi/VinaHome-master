@@ -22,31 +22,24 @@ public class ChitietPhieuDichvu {
 	public String getMaPhieuDichvu() {
 		return maPhieuDichvu;
 	}
-
 	public void setMaPhieuDichvu(String maPhieuDichvu) {
 		this.maPhieuDichvu = maPhieuDichvu;
 	}
-
 	public Dichvu getDichvu() {
 		return dichvu;
 	}
-
 	public void setDichvu(Dichvu dichvu) {
 		this.dichvu = dichvu;
 	}
-
 	public int getSoluong() {
 		return soluong;
 	}
-
 	public void setSoluong(int soluong) {
 		this.soluong = soluong;
 	}
-
 	public double getThanhTien() {
 		return thanhTien;
 	}
-
 	public void setThanhTien(double thanhTien) {
 		this.thanhTien = thanhTien;
 	}
@@ -55,10 +48,8 @@ public class ChitietPhieuDichvu {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((dichvu == null) ? 0 : dichvu.hashCode());
-		result = prime * result + ((maPhieuDichvu == null) ? 0 : maPhieuDichvu.hashCode());
 		return result;
 	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -72,11 +63,6 @@ public class ChitietPhieuDichvu {
 			if (other.dichvu != null)
 				return false;
 		} else if (!dichvu.equals(other.dichvu))
-			return false;
-		if (maPhieuDichvu == null) {
-			if (other.maPhieuDichvu != null)
-				return false;
-		} else if (!maPhieuDichvu.equals(other.maPhieuDichvu))
 			return false;
 		return true;
 	}

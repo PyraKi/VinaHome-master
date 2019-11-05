@@ -23,7 +23,6 @@ public class PhieuDichvu {
 	private NhanVien nhanVien;
 	private LocalDate ngaylap;
 	@OneToMany(fetch=FetchType.LAZY)
-	@JoinColumn(name="maPhieuDichvu")
 	private List<ChitietPhieuDichvu> dschitietPhieuDichvu;
 	private Double thanhtien;
 	public String getMaPhieuDV() {
