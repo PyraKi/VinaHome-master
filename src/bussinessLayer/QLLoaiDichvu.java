@@ -62,6 +62,7 @@ public class QLLoaiDichvu implements QLLoaiDichvuimp {
 			tr.begin();
 			em.merge(ldv);
 			tr.commit();
+			return true;
 		}catch (Exception e) {
 			e.printStackTrace();
 			tr.rollback();

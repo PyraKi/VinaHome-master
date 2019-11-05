@@ -62,6 +62,7 @@ public class QLPhieuDichvu implements QLPhieuDichvuimp {
 			tr.begin();
 			em.merge(pdv);
 			tr.commit();
+			return true;
 		}catch (Exception e) {
 			e.printStackTrace();
 			tr.rollback();

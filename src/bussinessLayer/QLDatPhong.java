@@ -63,6 +63,7 @@ public class QLDatPhong implements QLDatPhongimp {
 			tr.begin();
 			em.merge(dp);
 			tr.commit();
+			return true;
 		}catch (Exception e) {
 			e.printStackTrace();
 			tr.rollback();

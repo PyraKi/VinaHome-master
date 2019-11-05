@@ -62,6 +62,7 @@ public class QLGiuong implements QLGiuongimp {
 			tr.begin();
 			em.merge(g);
 			tr.commit();
+			return true;
 		}catch (Exception e) {
 			e.printStackTrace();
 			tr.rollback();

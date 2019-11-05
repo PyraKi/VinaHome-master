@@ -88,7 +88,9 @@ public class Phong {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((datPhong == null) ? 0 : datPhong.hashCode());
 		result = prime * result + ((maPhong == null) ? 0 : maPhong.hashCode());
+		result = prime * result + ((tinhtrangPhong == null) ? 0 : tinhtrangPhong.hashCode());
 		return result;
 	}
 	@Override
@@ -100,10 +102,20 @@ public class Phong {
 		if (getClass() != obj.getClass())
 			return false;
 		Phong other = (Phong) obj;
+		if (datPhong == null) {
+			if (other.datPhong != null)
+				return false;
+		} else if (!datPhong.equals(other.datPhong))
+			return false;
 		if (maPhong == null) {
 			if (other.maPhong != null)
 				return false;
 		} else if (!maPhong.equals(other.maPhong))
+			return false;
+		if (tinhtrangPhong == null) {
+			if (other.tinhtrangPhong != null)
+				return false;
+		} else if (!tinhtrangPhong.equals(other.tinhtrangPhong))
 			return false;
 		return true;
 	}

@@ -63,6 +63,7 @@ public class QLDichvu implements QLDichvuimp {
 			tr.begin();
 			em.merge(dv);
 			tr.commit();
+			return true;
 		}catch (Exception e) {
 			e.printStackTrace();
 			tr.rollback();

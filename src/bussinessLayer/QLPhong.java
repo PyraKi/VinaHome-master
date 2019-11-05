@@ -62,6 +62,7 @@ public class QLPhong implements QLPhongimp {
 			tr.begin();
 			em.merge(p);
 			tr.commit();
+			return true;
 		}catch (Exception e) {
 			e.printStackTrace();
 			tr.rollback();

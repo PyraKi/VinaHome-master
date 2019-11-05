@@ -61,6 +61,7 @@ public class QLHoadon implements QLHoadonimp {
 			tr.begin();
 			em.merge(hd);
 			tr.commit();
+			return true;
 		}catch (Exception e) {
 			e.printStackTrace();
 			tr.rollback();

@@ -677,8 +677,7 @@ public class UITiepTan extends JFrame {
 		contentPane.add(panel_DanhSachPhong);
 
 		List<Phong> dsphongs = phongDAO.getDSPhong();
-		int soPhong = dsphongs.size(),
-				soPhongTrong = 0, index = 0;
+		int soPhong = dsphongs.size(), index = 0;
 
 		/*
 		 * tạo ds phòng
@@ -710,7 +709,6 @@ public class UITiepTan extends JFrame {
 					format.format(phong.getGiaTheogio()), format.format(phong.getGiaQuadem()));
 			phongs[index] = new JButton(thongtinPhong);
 			ra = (phong.getTinhtrangPhong().equalsIgnoreCase("Phòng trống")) ? 0 : 1;
-			soPhongTrong += (ra == 0) ? 1 : 0;
 			phongs[index].setBackground(Color.decode(mausac[ra]));
 			phongs[index].setFont(new Font("Times New Roman", Font.BOLD, 20));
 			phongs[index].setPreferredSize(new Dimension(150, 180));
@@ -757,8 +755,17 @@ public class UITiepTan extends JFrame {
 		JScrollPane scrollPane = new JScrollPane(DsPhong);
 		scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 		panel_DanhSachPhong.add(scrollPane);
-		label_soPhong.setText(Integer.toString(soPhongTrong));
+		updateSophongtrong();
 		return true;
+	}
+	public void updateSophongtrong() {
+		List<Phong> dsphongs = phongDAO.getDSPhong();
+		int soPhongTrong = 0, ra;
+		for (Phong phong : dsphongs) {
+			ra = (phong.getTinhtrangPhong().equalsIgnoreCase("Phòng trống")) ? 0 : 1;
+			soPhongTrong += (ra == 0) ? 1 : 0;
+			label_soPhong.setText(Integer.toString(soPhongTrong));
+		}
 	}
 
 	public class DatPhongUI extends JDialog {
@@ -1336,7 +1343,21 @@ public class UITiepTan extends JFrame {
 						phong.setTinhtrangPhong("Phòng đặt");
 						int index = phongDAO.getDSPhong().indexOf(phong);
 						phongDAO.suaPhong(phong);
+						String thongtinPhong = String.format("<HTML>\r\n" + 
+								"<center>" + 
+								"Phòng %s <br>" + 
+								"Loại: %s <br>" +
+								"Giường: %s <br>" +
+								"Tình trạng: %s <br>" + 
+								"Theo giờ: %s<br>" + 
+								"Qua đêm: %s<br>" + 
+								"</center>" + 
+								"</HTML>", phong.getSoPhong(), phong.getLoaiPhong().getTenLoaiphong(),
+								phong.getGiuong().getLoaiGiuong(), phong.getTinhtrangPhong(), 
+								format.format(phong.getGiaTheogio()), format.format(phong.getGiaQuadem()));
+						phongs[index].setText(thongtinPhong);
 						phongs[index].setBackground(Color.decode("#D3D3D3")); //Phòng đang sử dụng
+						updateSophongtrong();
 						dispose();
 						JOptionPane.showMessageDialog(null, "Đặt phòng thành công!!");
 					}else JOptionPane.showMessageDialog(null, "Đặt phòng không thành công!!");
@@ -1437,7 +1458,7 @@ public class UITiepTan extends JFrame {
 		private JComboBox<String> cb_LoaiKH = new JComboBox<String>(dfLoaiKH);
 		private DatPhong datPhong;
 		private Phong phong;
-		private KhachHang khachHang;
+		
 		public ThuePhongUI(Phong phong) {
 			super(new JFrame(), "Thuê phòng", true);
 			setBounds(0, 0, 720, 530);
@@ -1447,14 +1468,13 @@ public class UITiepTan extends JFrame {
 			setLayout(null);
 			this.phong = phong;
 			
-			//lay thong tin KH
+			//lay thong tin dat phong
 			for (DatPhong dp : phong.getDatPhong()) {
 				if(dp.getNgayDatPhong().compareTo(LocalDate.now()) <= 0) {
 					datPhong = dp;
 					break;
 				}
 			}
-			khachHang = datPhong.getKhachHang();
 			
 			dateChooser_nhan.setDateFormatString("dd/MM/yyyy");
 			dateChooser_tra.setDateFormatString("dd/MM/yyyy");
@@ -1720,54 +1740,14 @@ public class UITiepTan extends JFrame {
 			cb_LoaiKH.setBounds(116, 170, 103, 22);
 			panel_thongtinKH.add(cb_LoaiKH);
 			dfLoaiKH.setSelectedItem(datPhong.getKhachHang().getLoaiKH());
-			cb_LoaiKH.setEditable(false);
+			cb_LoaiKH.setEnabled(false);
 
-			JButton btnclear = new JButton("clear");
-			btnclear.setIcon(new ImageIcon(DatPhong.class.getResource("/images/clear.png")));
-			btnclear.setFont(new Font("Times New Roman", Font.PLAIN, 16));
-			btnclear.setBounds(237, 197, 89, 23);
-			btnclear.addMouseListener(new MouseListener() {
-				@Override
-				public void mouseReleased(MouseEvent e) {
-
-				}
-
-				@Override
-				public void mousePressed(MouseEvent e) {
-
-				}
-
-				@Override
-				public void mouseExited(MouseEvent e) {
-
-				}
-
-				@Override
-				public void mouseEntered(MouseEvent e) {
-
-				}
-
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					tfHoten.setText("");
-					tfHoten.requestFocus();
-					tfSoDT.setText("");
-					tfSoCMND.setText("");
-					ngaysinh.setDate(new Date());
-					dfLoaiKH.setSelectedItem(loaiKH[0]);
-					tfTinh.setText("");
-					tfQuan.setText("");
-					tfPhuong.setText("");
-					tfDuong.setText("");
-					tfSonha.setText("");
-				}
-			});
-			panel_Diachi.add(btnclear);
-
-			JButton btnThoat = new JButton("Thoát");
-			btnThoat.setIcon(new ImageIcon(DatPhong.class.getResource("/images/cancel.png")));
+			JButton btnThoat = new JButton("Hủy đặt phòng");
+			btnThoat.setIcon(new ImageIcon(DatPhong.class.getResource("/images/cancel-button.jpg")));
 			btnThoat.setFont(new Font("Times New Roman", Font.BOLD, 28));
-			btnThoat.setBounds(10, 455, 127, 35);
+			btnThoat.setBounds(10, 455, 235, 35);
+			btnThoat.setVerticalTextPosition(SwingConstants.CENTER);
+			btnThoat.setHorizontalTextPosition(SwingConstants.LEFT);
 			btnThoat.addMouseListener(new MouseListener() {
 
 				@Override
@@ -1793,21 +1773,52 @@ public class UITiepTan extends JFrame {
 				@Override
 				public void mouseClicked(MouseEvent e) {
 					if(JOptionPane.showConfirmDialog(null,
-							"Bạn có muốn Thoát?", "Thoát", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
-						dispose();
+							"Bạn có muốn hủy đặt phòng?", "Hủy", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+						huyDatphong();
+					}
 				}
 			});
 			add(btnThoat);
 
-			JButton btDatphong = new JButton("Đặt phòng");
-			btDatphong.setIcon(new ImageIcon(DatPhong.class.getResource("/images/icons8-arrow-64.png")));
-			btDatphong.setFont(new Font("Times New Roman", Font.BOLD, 28));
-			btDatphong.setBounds(513, 455, 191, 35);
-			btDatphong.setVerticalTextPosition(SwingConstants.CENTER);
-			btDatphong.setHorizontalTextPosition(SwingConstants.LEFT);
-			add(btDatphong);
+			JButton btThuephong = new JButton("Thuê phòng");
+			btThuephong.setIcon(new ImageIcon(DatPhong.class.getResource("/images/icons8-arrow-64.png")));
+			btThuephong.setFont(new Font("Times New Roman", Font.BOLD, 28));
+			btThuephong.setBounds(513, 455, 191, 35);
+			btThuephong.setVerticalTextPosition(SwingConstants.CENTER);
+			btThuephong.setHorizontalTextPosition(SwingConstants.LEFT);
+			add(btThuephong);
+			btThuephong.addMouseListener(new MouseListener() {
+				
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					
+				}
+				
+				@Override
+				public void mousePressed(MouseEvent e) {
+					
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent e) {
+					
+				}
+				
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					
+				}
+				
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					if(JOptionPane.showConfirmDialog(null,
+							"Bạn có muốn thuê phòng?", "Thuê phòng", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+						thuePhongev();
+					}
+				}
+			});
 			
-			 updateTongtien();
+			updateTongtien();
 		}
 		
 		public void updateTongtien() {
@@ -1818,6 +1829,58 @@ public class UITiepTan extends JFrame {
 			}else 
 				tongtien.setText(format.format((dfloaithue.getSelectedItem().equals(loaithue[0]) ? 
 						phong.getGiaTheogio() : phong.getGiaQuadem())));
+		}
+		
+		public void huyDatphong() {
+			if(datPhongDAO.xoaDatPhong(datPhong.getMaDP())) {
+				List<DatPhong> newDatphong = phong.getDatPhong();
+				newDatphong.remove(datPhong);
+				phong.setDatPhong(newDatphong);
+				phong.setTinhtrangPhong("Phòng trống");
+				int index = phongDAO.getDSPhong().indexOf(phong);
+				phongDAO.suaPhong(phong);
+				String thongtinPhong = String.format("<HTML>\r\n" + 
+						"<center>" + 
+						"Phòng %s <br>" + 
+						"Loại: %s <br>" +
+						"Giường: %s <br>" +
+						"Tình trạng: %s <br>" + 
+						"Theo giờ: %s<br>" + 
+						"Qua đêm: %s<br>" + 
+						"</center>" + 
+						"</HTML>", phong.getSoPhong(), phong.getLoaiPhong().getTenLoaiphong(),
+						phong.getGiuong().getLoaiGiuong(), phong.getTinhtrangPhong(), 
+						format.format(phong.getGiaTheogio()), format.format(phong.getGiaQuadem()));
+				phongs[index].setBackground(Color.decode("#F5F5DC")); //Phòng trống
+				phongs[index].setText(thongtinPhong);
+				updateSophongtrong();
+				JOptionPane.showMessageDialog(null, "Hủy đặt phòng thành công!!");
+				dispose();
+			}else JOptionPane.showMessageDialog(null, "Hủy đặt phòng không thành công!!");
+		}
+		
+		public void thuePhongev() {
+			phong.setTinhtrangPhong("Phòng đang thuê");
+			int index = phongDAO.getDSPhong().indexOf(phong);
+			if(phongDAO.suaPhong(phong)) {
+				String thongtinPhong = String.format("<HTML>\r\n" + 
+						"<center>" + 
+						"Phòng %s <br>" + 
+						"Loại: %s <br>" +
+						"Giường: %s <br>" +
+						"Tình trạng: %s <br>" + 
+						"Theo giờ: %s<br>" + 
+						"Qua đêm: %s<br>" + 
+						"</center>" + 
+						"</HTML>", phong.getSoPhong(), phong.getLoaiPhong().getTenLoaiphong(),
+						phong.getGiuong().getLoaiGiuong(), phong.getTinhtrangPhong(), 
+						format.format(phong.getGiaTheogio()), format.format(phong.getGiaQuadem()));
+				phongs[index].setBackground(Color.decode("#D3D3D3")); //Phòng đang thuê
+				phongs[index].setText(thongtinPhong);
+				updateSophongtrong();
+				JOptionPane.showMessageDialog(null, "Thuê phòng thành công!!");
+				dispose();
+			}else JOptionPane.showMessageDialog(null, "Thuê phòng không thành công!!");
 		}
 	}
 

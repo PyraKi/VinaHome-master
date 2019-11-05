@@ -59,6 +59,7 @@ public class QLKhachhang implements QLKhachhangimp {
 			tr.begin();
 			em.merge(kh);
 			tr.commit();
+			return true;
 		}catch (Exception e) {
 			e.printStackTrace();
 			tr.rollback();

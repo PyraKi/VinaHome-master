@@ -58,6 +58,7 @@ public class QLTaiKhoan implements QLTaiKhoanimp {
 			tr.begin();
 			em.merge(tk);
 			tr.commit();
+			return true;
 		}catch (Exception e) {
 			e.printStackTrace();
 			tr.rollback();

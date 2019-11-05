@@ -60,6 +60,7 @@ public class QLDiachi implements QLDiachiimp{
 			tr.begin();
 			em.merge(dc);
 			tr.commit();
+			return true;
 		}catch (Exception e) {
 			e.printStackTrace();
 			tr.rollback();
