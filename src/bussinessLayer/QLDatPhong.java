@@ -9,12 +9,16 @@ import entity.DatPhong;
 import implementsLayer.QLDatPhongimp;
 
 public class QLDatPhong implements QLDatPhongimp {
+	
+	// truy van databse tren mongo ke thua tu implement
 	private EntityManager em;
 	public QLDatPhong(EntityManager em) {
 		super();
 		this.em = em;
 	}
-	
+	// them datphong vao co so du lieu
+	// true khi ko trung
+	// fasle khi trung
 	@Override
 	public boolean themDatPhong(DatPhong dp) {
 		EntityTransaction tr=em.getTransaction();

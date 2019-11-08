@@ -40,6 +40,7 @@ public class Login extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 729, 476);
 		setLocationRelativeTo(null);
+		setResizable(false);
 		
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(255, 255, 240));
@@ -131,6 +132,7 @@ public class Login extends JFrame {
 		});
 		
 		username = new JTextField();
+		username.setText("nv001");
 		username.setFont(new Font("Times New Roman", Font.PLAIN, 18));
 		username.setBounds(395, 146, 283, 36);
 		contentPane.add(username);
@@ -155,6 +157,7 @@ public class Login extends JFrame {
 		contentPane.add(lblPassword);
 		
 		passwordField = new JPasswordField();
+		passwordField.setText("123123");
 		passwordField.setFont(new Font("Times New Roman", Font.PLAIN, 18));
 		passwordField.setBounds(395, 232, 283, 36);
 		contentPane.add(passwordField);
@@ -172,17 +175,12 @@ public class Login extends JFrame {
 		@SuppressWarnings("deprecation")
 		String pw = passwordField.getText().trim();
 		
-		//by pass
-		id = "nv001";
-		pw = "123123";
-		
 		if(id.isEmpty() || pw.isEmpty()) {
 			JOptionPane.showMessageDialog(null, "Bạn chưa nhập đầy đủ thông tin!!", "Thông báo", 1);
 		}else {
 			NhanVien nv = new QLNhanVien(em).getLogin(id, pw);
 			if(nv != null) {
-				if(nv.getChuVu().equalsIgnoreCase("Tiếp tân"))
-					new UITiepTan(nv, em).setVisible(true);	
+				new UIVinaHome(nv, em).setVisible(true);	
 				dispose();
 			}
 			else

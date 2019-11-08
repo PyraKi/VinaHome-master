@@ -8,12 +8,16 @@ import entity.NhanVien;
 import implementsLayer.QLNhanvienimp;
 
 public class QLNhanVien implements QLNhanvienimp{
+	
+	// truy van databse tren mongo ke thua tu implement
 	private EntityManager em;
 	public QLNhanVien(EntityManager em) {
 		super();
 		this.em = em;
 	}
-	
+	// them nhanvien vao co so du lieu
+	// true khi ko trung
+	// fasle khi trung
 	@Override
 	public boolean themNhanvien(NhanVien nv) {
 		// TODO Auto-generated method stub

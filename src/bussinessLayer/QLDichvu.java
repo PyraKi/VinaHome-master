@@ -9,6 +9,8 @@ import entity.Dichvu;
 import implementsLayer.QLDichvuimp;
 
 public class QLDichvu implements QLDichvuimp {
+	
+	// truy van databse tren mongo ke thua tu implement
 	private EntityManager em;
 	
 	public QLDichvu(EntityManager em) {
@@ -16,6 +18,9 @@ public class QLDichvu implements QLDichvuimp {
 		this.em = em;
 	}
 	
+	// them dichvu vao co so du lieu
+	// true khi ko trung
+	// fasle khi trung
 	@Override
 	public boolean themDichvu(Dichvu dv) {
 		EntityTransaction tr=em.getTransaction();

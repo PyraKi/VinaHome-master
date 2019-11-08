@@ -9,12 +9,16 @@ import entity.Phong;
 import implementsLayer.QLPhongimp;
 
 public class QLPhong implements QLPhongimp {
+	
+	// truy van databse tren mongo ke thua tu implement
 	private EntityManager em;
 	public QLPhong(EntityManager em) {
 		super();
 		this.em = em;
 	}
-	
+	// them phong vao co so du lieu
+	// true khi ko trung
+	// fasle khi trung
 	@Override
 	public boolean themPhong(Phong p) {
 		EntityTransaction tr=em.getTransaction();

@@ -9,12 +9,16 @@ import entity.PhieuDichvu;
 import implementsLayer.QLPhieuDichvuimp;
 
 public class QLPhieuDichvu implements QLPhieuDichvuimp {
+	
+	// truy van databse tren mongo ke thua tu implement
 	private EntityManager em;
 	public QLPhieuDichvu(EntityManager em) {
 		super();
 		this.em = em;
 	}
-	
+	// them phieudichvu vao co so du lieu
+	// true khi ko trung
+	// fasle khi trung
 	@Override
 	public boolean themPhieuDichvu(PhieuDichvu pdv) {
 		EntityTransaction tr=em.getTransaction();

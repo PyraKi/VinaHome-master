@@ -11,12 +11,16 @@ import implementsLayer.QLChitietDichvuimp;
 
 
 public class QLChitietDichvu implements QLChitietDichvuimp {
+	
+	// truy van databse tren mongo ke thua tu implement
 	private EntityManager em;
 	public QLChitietDichvu(EntityManager em) {
 		super();
 		this.em = em;
 	}
-	
+	// them chitietphieudichvu vao co so du lieu
+	// true khi ko trung
+	// fasle khi trung
 	@Override
 	public boolean themChitietDichvu(ChitietPhieuDichvu ctdv) {
 		EntityTransaction tr=em.getTransaction();

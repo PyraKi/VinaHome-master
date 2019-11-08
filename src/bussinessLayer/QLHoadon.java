@@ -9,12 +9,16 @@ import entity.Hoadon;
 import implementsLayer.QLHoadonimp;
 
 public class QLHoadon implements QLHoadonimp {
+	
+	// truy van databse tren mongo ke thua tu implement
 	private EntityManager em;
 	public QLHoadon(EntityManager em) {
 		super();
 		this.em = em;
 	}
-	
+	// them hoadon vao co so du lieu
+	// true khi ko trung
+	// fasle khi trung
 	@Override
 	public boolean themHoadon(Hoadon hd) {
 		EntityTransaction tr=em.getTransaction();

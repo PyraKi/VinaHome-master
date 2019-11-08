@@ -9,12 +9,16 @@ import entity.KhachHang;
 import implementsLayer.QLKhachhangimp;
 
 public class QLKhachhang implements QLKhachhangimp {
+	
+	// truy van databse tren mongo ke thua tu implement
 	private EntityManager em;
 	public QLKhachhang(EntityManager em) {
 		super();
 		this.em = em;
 	}
-	
+	// them khachhang vao co so du lieu
+	// true khi ko trung
+	// fasle khi trung
 	@Override
 	public boolean themKhachHang(KhachHang kh) {
 		EntityTransaction tr=em.getTransaction();

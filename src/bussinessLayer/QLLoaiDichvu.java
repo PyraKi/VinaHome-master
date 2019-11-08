@@ -9,12 +9,16 @@ import entity.LoaiDichvu;
 import implementsLayer.QLLoaiDichvuimp;
 
 public class QLLoaiDichvu implements QLLoaiDichvuimp {
+	
+	// truy van databse tren mongo ke thua tu implement
 	private EntityManager em;
 	public QLLoaiDichvu(EntityManager em) {
 		super();
 		this.em = em;
 	}
-	
+	// them loaidichvu vao co so du lieu
+	// true khi ko trung
+	// fasle khi trung
 	@Override
 	public boolean themLoaiDichvu(LoaiDichvu ldv) {
 		EntityTransaction tr=em.getTransaction();

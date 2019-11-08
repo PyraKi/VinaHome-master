@@ -9,12 +9,16 @@ import entity.LoaiPhong;
 import implementsLayer.QLLoaiphongimp;
 
 public class QLLoaiphong implements QLLoaiphongimp {
+	
+	// truy van databse tren mongo ke thua tu implement
 	private EntityManager em;
 	public QLLoaiphong(EntityManager em) {
 		super();
 		this.em = em;
 	}
-	
+	// them loaiphong vao co so du lieu
+	// true khi ko trung
+	// fasle khi trung
 	@Override
 	public boolean themLoaiPhong(LoaiPhong lp) {
 		EntityTransaction tr=em.getTransaction();

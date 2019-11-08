@@ -16,11 +16,11 @@
 	<classpathentry kind="lib" path="jgoodies-common-1.8.0.jar" sourcepath="jgoodies-common-1.8.0-sources.jar"/>
 	<classpathentry kind="lib" path="jgoodies-forms-1.8.0.jar" sourcepath="jgoodies-forms-1.8.0-sources.jar"/>
 	<classpathentry kind="lib" path="lib/jdatechooser_bin_doc_1_1_1/DateChooserDemo.jar"/>
+	<classpathentry kind="lib" path="lib/jcalendar-1.2.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/PTanNhom1_QLST-master/bin/lib/jcalendar-1.2.2.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

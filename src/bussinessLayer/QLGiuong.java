@@ -9,12 +9,16 @@ import entity.Giuong;
 import implementsLayer.QLGiuongimp;
 
 public class QLGiuong implements QLGiuongimp {
+	
+	// truy van databse tren mongo ke thua tu implement
 	private EntityManager em;
 	public QLGiuong(EntityManager em) {
 		super();
 		this.em = em;
 	}
-
+	// them giuong vao co so du lieu
+	// true khi ko trung
+	// fasle khi trung
 	@Override
 	public boolean themGiuong(Giuong g) {
 		EntityTransaction tr=em.getTransaction();
