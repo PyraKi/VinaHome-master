@@ -132,7 +132,7 @@ public class Login extends JFrame {
 		});
 		
 		username = new JTextField();
-		username.setText("nv001");
+		username.setText("nhinguyen");
 		username.setFont(new Font("Times New Roman", Font.PLAIN, 18));
 		username.setBounds(395, 146, 283, 36);
 		contentPane.add(username);

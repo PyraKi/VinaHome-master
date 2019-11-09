@@ -1,5 +1,6 @@
 @echo export database MonogoDB
-mongoexport -d "HotelManager" -c "Phong" -o "phong.json"
+mongoexport -d "HotelManager" -c "Phong" -o "Phong.json"
+mongoexport -d "HotelManager" -c "LoaiPhong" -o "LoaiPhong.json"
 mongoexport -d "HotelManager" -c "DatPhong" -o "DatPhong.json"
 mongoexport -d "HotelManager" -c "DiaChi" -o "DiaChi.json"
 mongoexport -d "HotelManager" -c "Dichvu" -o "Dichvu.json"

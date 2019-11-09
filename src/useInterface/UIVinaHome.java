@@ -85,7 +85,6 @@ import javax.swing.RowFilter;
 import javax.swing.JOptionPane;
 import javax.swing.BoxLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 
 import javax.swing.JTable;
 import java.awt.BorderLayout;
@@ -531,12 +530,12 @@ public class UIVinaHome extends JFrame {
 						contentPane.add(dateweek);
 
 						dateweek.setForeground(new Color(0, 0, 255));
-						dateweek.setFont(new Font("Times New Roman", Font.PLAIN, 22));
+						dateweek.setFont(new Font("Times New Roman", Font.PLAIN, 24));
 						date.setBounds(1790, 25, 122, 29);
 						contentPane.add(date);
 
 						date.setForeground(new Color(0, 0, 255));
-						date.setFont(new Font("Times New Roman", Font.PLAIN, 22));
+						date.setFont(new Font("Times New Roman", Font.PLAIN, 24));
 						tim.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
@@ -597,16 +596,14 @@ public class UIVinaHome extends JFrame {
 				String resource = "/images/phong/";
 				if(phong.getLoaiPhong().getMaLP().equals("PD"))
 					resource += "phongdon.jpg";
-				else if(phong.getLoaiPhong().getMaLP().equals("PD"))
-					resource += phong.getGiuong().getMaGiuong().equals("GS1") ? "phongdoi.jpg" : "phongdoi2.jpg";
+				else if(phong.getLoaiPhong().getMaLP().equals("PDD"))
+					resource += phong.getGiuong().getMaGiuong().equals("GDN") ? "phongdoi.jpg" : "phongdoi2.PNG";
 				else resource += "phongGD.jpg";
 				Image img = ImageIO.read(getClass().getResource(resource));
 				phongs[index].setIcon(new ImageIcon(img));
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
-
-			phongs[index].setPreferredSize(new Dimension(150, 180));
 			phongs[index].setOpaque(true);
 			phongs[index].addMouseListener(new MouseListener() {
 
