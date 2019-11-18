@@ -70,7 +70,8 @@ public class KhachHang {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((maKH == null) ? 0 : maKH.hashCode());
+		result = prime * result + ((soDT == null) ? 0 : soDT.hashCode());
+		result = prime * result + ((tenKH == null) ? 0 : tenKH.hashCode());
 		return result;
 	}
 	@Override
@@ -82,10 +83,15 @@ public class KhachHang {
 		if (getClass() != obj.getClass())
 			return false;
 		KhachHang other = (KhachHang) obj;
-		if (maKH == null) {
-			if (other.maKH != null)
+		if (soDT == null) {
+			if (other.soDT != null)
 				return false;
-		} else if (!maKH.equals(other.maKH))
+		} else if (!soDT.equals(other.soDT))
+			return false;
+		if (tenKH == null) {
+			if (other.tenKH != null)
+				return false;
+		} else if (!tenKH.equals(other.tenKH))
 			return false;
 		return true;
 	}

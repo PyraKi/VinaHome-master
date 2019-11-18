@@ -6,5 +6,7 @@ mongoimport --db HotelManager --collection NhanVien --file NhanVien.json --jsonA
 mongoimport --db HotelManager --collection LoaiPhong --file LoaiPhong.json --jsonArray
 mongoimport --db HotelManager --collection Giuong --file Giuong.json --jsonArray
 mongoimport --db HotelManager --collection Phong --file Phong.json --jsonArray
+mongoimport --db HotelManager --collection LoaiDichvu --file LoaiDichvu.json --jsonArray
+mongoimport --db HotelManager --collection Dichvu --file Dichvu.json --jsonArray
 @echo import sucsess
 pause

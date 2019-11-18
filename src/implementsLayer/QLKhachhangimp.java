@@ -16,4 +16,10 @@ public interface QLKhachhangimp {
 
 	List<KhachHang> getDSKhachHang();
 
+	KhachHang timKhachHang(String tenKH, String soDT);
+
+	KhachHang timTenKH(String tenKH);
+
+	KhachHang timSoDTKH(String soDT);
+	
 }

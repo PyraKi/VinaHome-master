@@ -24,7 +24,6 @@ public class PhieuDichvu {
 	private LocalDate ngaylap;
 	@OneToMany(fetch=FetchType.LAZY)
 	private List<ChitietPhieuDichvu> dschitietPhieuDichvu;
-	private Double thanhtien;
 	public String getMaPhieuDV() {
 		return maPhieuDV;
 	}
@@ -49,12 +48,6 @@ public class PhieuDichvu {
 	public void setDschitietPhieuDichvu(List<ChitietPhieuDichvu> dschitietPhieuDichvu) {
 		this.dschitietPhieuDichvu = dschitietPhieuDichvu;
 	}
-	public Double getThanhtien() {
-		return thanhtien;
-	}
-	public void setThanhtien(Double thanhtien) {
-		this.thanhtien = thanhtien;
-	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -63,13 +56,12 @@ public class PhieuDichvu {
 		return result;
 	}
 	public PhieuDichvu(String maPhieuDV, NhanVien nhanVien, LocalDate ngaylap,
-			List<ChitietPhieuDichvu> dschitietPhieuDichvu, Double thanhtien) {
+			List<ChitietPhieuDichvu> dschitietPhieuDichvu) {
 		super();
 		this.maPhieuDV = maPhieuDV;
 		this.nhanVien = nhanVien;
 		this.ngaylap = ngaylap;
 		this.dschitietPhieuDichvu = dschitietPhieuDichvu;
-		this.thanhtien = thanhtien;
 	}
 	public PhieuDichvu() {
 		super();
@@ -90,6 +82,12 @@ public class PhieuDichvu {
 			return false;
 		return true;
 	}
+	public double ThanhTien() {
+		double s = 0;
+		for (ChitietPhieuDichvu chitietPhieuDichvu : dschitietPhieuDichvu) 
+			s += chitietPhieuDichvu.ThanhTien();
+		return s;
+	}
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("PhieuDichvu [maPhieuDV=");
@@ -100,8 +98,6 @@ public class PhieuDichvu {
 		builder.append(ngaylap);
 		builder.append(", dschitietPhieuDichvu=");
 		builder.append(dschitietPhieuDichvu);
-		builder.append(", thanhtien=");
-		builder.append(thanhtien);
 		builder.append(", birthYear=");
 		builder.append("]");
 		return builder.toString();

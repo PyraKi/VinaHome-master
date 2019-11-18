@@ -18,4 +18,6 @@ public interface QLNhanvienimp {
 
 	boolean suaNhanvien(NhanVien nv);
 
+	NhanVien timNhanvien(String tenNV, String soDT);
+
 }

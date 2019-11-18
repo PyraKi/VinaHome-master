@@ -4,6 +4,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
 import java.util.List;
+
 import entity.NhanVien;
 import implementsLayer.QLNhanvienimp;
 
@@ -20,7 +21,6 @@ public class QLNhanVien implements QLNhanvienimp{
 	// fasle khi trung
 	@Override
 	public boolean themNhanvien(NhanVien nv) {
-		// TODO Auto-generated method stub
 		EntityTransaction tr=em.getTransaction();
 		try {
 			tr.begin();
@@ -58,6 +58,15 @@ public class QLNhanVien implements QLNhanvienimp{
 	@Override
 	public NhanVien timNhanvien(String maNV) {
 		return em.find(NhanVien.class, maNV);
+	}
+	
+	@Override
+	public NhanVien timNhanvien(String tenNV, String soDT) {
+		for (NhanVien nhanVien : getDSNV()) {
+			if(nhanVien.getTenNV().equalsIgnoreCase(tenNV) && nhanVien.getSoDT().equals(soDT))
+				return nhanVien;
+		}
+		return null;
 	}
 	
 	@Override

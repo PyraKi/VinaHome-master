@@ -18,7 +18,6 @@ public class ChitietPhieuDichvu {
 	@JoinColumn(name="maDV")
 	private Dichvu dichvu;
 	private int soluong;
-	private double thanhTien;
 	public String getMaPhieuDichvu() {
 		return maPhieuDichvu;
 	}
@@ -36,12 +35,6 @@ public class ChitietPhieuDichvu {
 	}
 	public void setSoluong(int soluong) {
 		this.soluong = soluong;
-	}
-	public double getThanhTien() {
-		return thanhTien;
-	}
-	public void setThanhTien(double thanhTien) {
-		this.thanhTien = thanhTien;
 	}
 	@Override
 	public int hashCode() {
@@ -66,15 +59,17 @@ public class ChitietPhieuDichvu {
 			return false;
 		return true;
 	}
-	public ChitietPhieuDichvu(String maPhieuDichvu, Dichvu dichvu, int soluong, double thanhTien) {
+	public ChitietPhieuDichvu(String maPhieuDichvu, Dichvu dichvu, int soluong) {
 		super();
 		this.maPhieuDichvu = maPhieuDichvu;
 		this.dichvu = dichvu;
 		this.soluong = soluong;
-		this.thanhTien = thanhTien;
 	}
 	public ChitietPhieuDichvu() {
 		super();
+	}
+	public double ThanhTien() {
+		return dichvu.getGia() * soluong;
 	}
 	@Override
 	public String toString() {
@@ -85,8 +80,6 @@ public class ChitietPhieuDichvu {
 		builder.append(dichvu);
 		builder.append(", soluong=");
 		builder.append(soluong);
-		builder.append(", thanhTien=");
-		builder.append(thanhTien);
 		builder.append("]");
 		return builder.toString();
 	}

@@ -41,6 +41,7 @@ public class Login extends JFrame {
 		setBounds(100, 100, 729, 476);
 		setLocationRelativeTo(null);
 		setResizable(false);
+		setTitle("Đăng nhập");
 		
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(255, 255, 240));
@@ -126,7 +127,6 @@ public class Login extends JFrame {
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				
 				checklog();
 			}
 		});

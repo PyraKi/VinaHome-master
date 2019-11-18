@@ -70,8 +70,34 @@ public class QLKhachhang implements QLKhachhangimp {
 		}
 		return false;
 	}
-
 	
+	@Override
+	public KhachHang timKhachHang(String tenKH, String soDT) {
+		for (KhachHang khachHang : getDSKhachHang()) {
+			if(khachHang.getTenKH().equalsIgnoreCase(tenKH) && khachHang.getSoDT().equals(soDT))
+				return khachHang;
+		}
+		return null;
+	}
+	
+	@Override
+	public KhachHang timTenKH(String tenKH) {
+		for (KhachHang khachHang : getDSKhachHang()) {
+			if(khachHang.getTenKH().equalsIgnoreCase(tenKH))
+				return khachHang;
+		}
+		return null;
+	}
+	
+	@Override
+	public KhachHang timSoDTKH(String soDT) {
+		for (KhachHang khachHang : getDSKhachHang()) {
+			if(khachHang.getSoDT().equals(soDT))
+				return khachHang;
+		}
+		return null;
+	}
+
 	@Override
 	public List<KhachHang> getDSKhachHang() {
 		return em.createQuery("from KhachHang kh",KhachHang.class).getResultList();
