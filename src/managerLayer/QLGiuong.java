@@ -1,30 +1,30 @@
-package bussinessLayer;
+package managerLayer;
 
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
-import entity.Hoadon;
-import implementsLayer.QLHoadonimp;
+import entity.Giuong;
+import implementsLayer.QLGiuongimp;
 
-public class QLHoadon implements QLHoadonimp {
+public class QLGiuong implements QLGiuongimp {
 	
 	// truy van databse tren mongo ke thua tu implement
 	private EntityManager em;
-	public QLHoadon(EntityManager em) {
+	public QLGiuong(EntityManager em) {
 		super();
 		this.em = em;
 	}
-	// them hoadon vao co so du lieu
+	// them giuong vao co so du lieu
 	// true khi ko trung
 	// fasle khi trung
 	@Override
-	public boolean themHoadon(Hoadon hd) {
+	public boolean themGiuong(Giuong g) {
 		EntityTransaction tr=em.getTransaction();
 		try {
 			tr.begin();
-			em.persist(hd);
+			em.persist(g);
 			tr.commit();
 			return true;
 		}catch (Exception e) {
@@ -33,20 +33,22 @@ public class QLHoadon implements QLHoadonimp {
 		}
 		return false;
 	}
-
 	
+
+
 	@Override
-	public Hoadon timHoadon(String maHD) {
-		return em.find(Hoadon.class, maHD);
+	public Giuong timGiuong(String mag) {
+		return em.find(Giuong.class, mag);
 	}
 	
 
+
 	@Override
-	public boolean xoaHoadon(String maHD) {
+	public boolean xoaGiuong(String mag) {
 		EntityTransaction tr = em.getTransaction();
 		try {
 			tr.begin();
-			em.remove(timHoadon(maHD));
+			em.remove(timGiuong(mag));
 			tr.commit();
 			return true;
 		}catch (Exception e) {
@@ -56,14 +58,13 @@ public class QLHoadon implements QLHoadonimp {
 		return false;
 	}
 	
-	
-	
+
 	@Override
-	public boolean suaHoadon(Hoadon hd) {
+	public boolean suaGiuong(Giuong g) {
 		EntityTransaction tr = em.getTransaction();
 		try {
 			tr.begin();
-			em.merge(hd);
+			em.merge(g);
 			tr.commit();
 			return true;
 		}catch (Exception e) {
@@ -73,10 +74,9 @@ public class QLHoadon implements QLHoadonimp {
 		return false;
 	}
 
-	
-	
+
 	@Override
-	public List<Hoadon> getDSHoadon() {
-		return em.createQuery("from Hoadon hd",Hoadon.class).getResultList();
+	public List<Giuong> getDSGiuong() {
+		return em.createQuery("from Giuong g",Giuong.class).getResultList();
 	}
 }

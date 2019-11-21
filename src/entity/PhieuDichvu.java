@@ -1,6 +1,6 @@
 package entity;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -21,7 +21,7 @@ public class PhieuDichvu {
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="maNV")
 	private NhanVien nhanVien;
-	private LocalDate ngaylap;
+	private LocalDateTime ngaylap;
 	@OneToMany(fetch=FetchType.LAZY)
 	private List<ChitietPhieuDichvu> dschitietPhieuDichvu;
 	public String getMaPhieuDV() {
@@ -36,10 +36,10 @@ public class PhieuDichvu {
 	public void setNhanVien(NhanVien nhanVien) {
 		this.nhanVien = nhanVien;
 	}
-	public LocalDate getNgaylap() {
+	public LocalDateTime getNgaylap() {
 		return ngaylap;
 	}
-	public void setNgaylap(LocalDate ngaylap) {
+	public void setNgaylap(LocalDateTime ngaylap) {
 		this.ngaylap = ngaylap;
 	}
 	public List<ChitietPhieuDichvu> getDschitietPhieuDichvu() {
@@ -55,7 +55,7 @@ public class PhieuDichvu {
 		result = prime * result + ((maPhieuDV == null) ? 0 : maPhieuDV.hashCode());
 		return result;
 	}
-	public PhieuDichvu(String maPhieuDV, NhanVien nhanVien, LocalDate ngaylap,
+	public PhieuDichvu(String maPhieuDV, NhanVien nhanVien, LocalDateTime ngaylap,
 			List<ChitietPhieuDichvu> dschitietPhieuDichvu) {
 		super();
 		this.maPhieuDV = maPhieuDV;

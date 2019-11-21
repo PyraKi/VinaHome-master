@@ -1,4 +1,4 @@
-package bussinessLayer;
+package managerLayer;
 
 import java.util.List;
 

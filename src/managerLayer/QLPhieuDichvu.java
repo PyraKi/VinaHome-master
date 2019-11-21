@@ -1,32 +1,30 @@
-package bussinessLayer;
+package managerLayer;
 
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
-import entity.ChitietPhieuDichvu;
-import implementsLayer.QLChitietDichvuimp;
+import entity.PhieuDichvu;
+import implementsLayer.QLPhieuDichvuimp;
 
-
-
-public class QLChitietDichvu implements QLChitietDichvuimp {
+public class QLPhieuDichvu implements QLPhieuDichvuimp {
 	
 	// truy van databse tren mongo ke thua tu implement
 	private EntityManager em;
-	public QLChitietDichvu(EntityManager em) {
+	public QLPhieuDichvu(EntityManager em) {
 		super();
 		this.em = em;
 	}
-	// them chitietphieudichvu vao co so du lieu
+	// them phieudichvu vao co so du lieu
 	// true khi ko trung
 	// fasle khi trung
 	@Override
-	public boolean themChitietDichvu(ChitietPhieuDichvu ctdv) {
+	public boolean themPhieuDichvu(PhieuDichvu pdv) {
 		EntityTransaction tr=em.getTransaction();
 		try {
 			tr.begin();
-			em.persist(ctdv);
+			em.persist(pdv);
 			tr.commit();
 			return true;
 		}catch (Exception e) {
@@ -35,20 +33,22 @@ public class QLChitietDichvu implements QLChitietDichvuimp {
 		}
 		return false;
 	}
+	
 
+	
 	@Override
-	public ChitietPhieuDichvu timChitietDichvu(String maPDV) {
-		return em.find(ChitietPhieuDichvu.class, maPDV);
+	public PhieuDichvu timPhieuDichvu(String mapdv) {
+		return em.find(PhieuDichvu.class, mapdv);
 	}
 	
 
 	
 	@Override
-	public boolean xoaChitietDichvu(String maPDV) {
+	public boolean xoaPhieuDichvu(String mapdv) {
 		EntityTransaction tr = em.getTransaction();
 		try {
 			tr.begin();
-			em.remove(timChitietDichvu(maPDV));
+			em.remove(timPhieuDichvu(mapdv));
 			tr.commit();
 			return true;
 		}catch (Exception e) {
@@ -60,11 +60,11 @@ public class QLChitietDichvu implements QLChitietDichvuimp {
 	
 	
 	@Override
-	public boolean suaChitietDichvu(ChitietPhieuDichvu ctdv) {
+	public boolean suaPhieuDichvu(PhieuDichvu pdv) {
 		EntityTransaction tr = em.getTransaction();
 		try {
 			tr.begin();
-			em.merge(ctdv);
+			em.merge(pdv);
 			tr.commit();
 			return true;
 		}catch (Exception e) {
@@ -76,7 +76,7 @@ public class QLChitietDichvu implements QLChitietDichvuimp {
 
 	
 	@Override
-	public List<ChitietPhieuDichvu> getDSChitietDichvu() {
-		return em.createQuery("from ChitietPhieuDichvu ctdv",ChitietPhieuDichvu.class).getResultList();
+	public List<PhieuDichvu> getDSPhieuDichvu() {
+		return em.createQuery("from PhieuDichvu pdv",PhieuDichvu.class).getResultList();
 	}
 }

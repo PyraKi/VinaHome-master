@@ -1,6 +1,5 @@
 package entity;
 
-import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,13 +7,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedNativeQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="Phong")
 @NamedNativeQuery(name="getPhong",query="db.Phong.find({})",resultClass=Phong.class)
-public class Phong {
+public class Phong implements Comparable<Phong>{
 	@Id
 	private String maPhong;
 	@ManyToOne(fetch=FetchType.LAZY)
@@ -22,14 +20,13 @@ public class Phong {
 	private LoaiPhong loaiPhong;
 	private double giaTheogio;
 	private double giaQuadem;
+	private double giaTheongay;
 	private String soPhong;
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="maGiuong")
 	private Giuong giuong;
 	private String tinhtrangPhong;
-	private int soNguoiToida; 
-	@OneToMany(fetch=FetchType.LAZY)
-	private List<DatPhong> datPhong;
+	private int soNguoiToida;
 	public String getMaPhong() {
 		return maPhong;
 	}
@@ -53,6 +50,12 @@ public class Phong {
 	}
 	public void setGiaQuadem(double giaQuadem) {
 		this.giaQuadem = giaQuadem;
+	}
+	public double getGiaTheongay() {
+		return giaTheongay;
+	}
+	public void setGiaTheongay(double giaTheongay) {
+		this.giaTheongay = giaTheongay;
 	}
 	public String getSoPhong() {
 		return soPhong;
@@ -78,19 +81,11 @@ public class Phong {
 	public void setSoNguoiToida(int soNguoiToida) {
 		this.soNguoiToida = soNguoiToida;
 	}
-	public List<DatPhong> getDatPhong() {
-		return datPhong;
-	}
-	public void setDatPhong(List<DatPhong> datPhong) {
-		this.datPhong = datPhong;
-	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((datPhong == null) ? 0 : datPhong.hashCode());
 		result = prime * result + ((maPhong == null) ? 0 : maPhong.hashCode());
-		result = prime * result + ((tinhtrangPhong == null) ? 0 : tinhtrangPhong.hashCode());
 		return result;
 	}
 	@Override
@@ -102,35 +97,25 @@ public class Phong {
 		if (getClass() != obj.getClass())
 			return false;
 		Phong other = (Phong) obj;
-		if (datPhong == null) {
-			if (other.datPhong != null)
-				return false;
-		} else if (!datPhong.equals(other.datPhong))
-			return false;
 		if (maPhong == null) {
 			if (other.maPhong != null)
 				return false;
 		} else if (!maPhong.equals(other.maPhong))
 			return false;
-		if (tinhtrangPhong == null) {
-			if (other.tinhtrangPhong != null)
-				return false;
-		} else if (!tinhtrangPhong.equals(other.tinhtrangPhong))
-			return false;
 		return true;
 	}
-	public Phong(String maPhong, LoaiPhong loaiPhong, double giaTheogio, double giaQuadem, String soPhong,
-			Giuong giuong, String tinhtrangPhong, int soNguoiToida, List<DatPhong> datPhong) {
+	public Phong(String maPhong, LoaiPhong loaiPhong, double giaTheogio, double giaQuadem, double giaTheongay,
+			String soPhong, Giuong giuong, String tinhtrangPhong, int soNguoiToida) {
 		super();
 		this.maPhong = maPhong;
 		this.loaiPhong = loaiPhong;
 		this.giaTheogio = giaTheogio;
 		this.giaQuadem = giaQuadem;
+		this.giaTheongay = giaTheongay;
 		this.soPhong = soPhong;
 		this.giuong = giuong;
 		this.tinhtrangPhong = tinhtrangPhong;
 		this.soNguoiToida = soNguoiToida;
-		this.datPhong = datPhong;
 	}
 	public Phong() {
 		super();
@@ -146,6 +131,8 @@ public class Phong {
 		builder.append(giaTheogio);
 		builder.append(", giaQuadem=");
 		builder.append(giaQuadem);
+		builder.append(", giaTheongay=");
+		builder.append(giaTheongay);
 		builder.append(", soPhong=");
 		builder.append(soPhong);
 		builder.append(", giuong=");
@@ -154,9 +141,11 @@ public class Phong {
 		builder.append(tinhtrangPhong);
 		builder.append(", soNguoiToida=");
 		builder.append(soNguoiToida);
-		builder.append(", datPhong=");
-		builder.append(datPhong);
 		builder.append("]");
 		return builder.toString();
+	}
+	@Override
+	public int compareTo(Phong o) {
+		return this.getMaPhong().compareTo(o.getMaPhong());
 	}
 }

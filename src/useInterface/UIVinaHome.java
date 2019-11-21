@@ -13,37 +13,46 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+
 import com.toedter.calendar.JDateChooser;
 
-import bussinessLayer.QLChitietDichvu;
-import bussinessLayer.QLDiachi;
-import bussinessLayer.QLDichvu;
-import bussinessLayer.QLKhachhang;
-import bussinessLayer.QLNhanVien;
-import bussinessLayer.QLPhieuDichvu;
-import bussinessLayer.QLPhong;
-import bussinessLayer.QLTaiKhoan;
+import entity.ChitietHoadon;
 import entity.ChitietPhieuDichvu;
 import entity.DiaChi;
 import entity.Dichvu;
+import entity.Hoadon;
 import entity.KhachHang;
 import entity.NhanVien;
 import entity.PhieuDichvu;
 import entity.Phong;
 import entity.TaiKhoan;
 import implementsLayer.QLChitietDichvuimp;
+import implementsLayer.QLChitietHoadonimp;
 import implementsLayer.QLDiachiimp;
 import implementsLayer.QLDichvuimp;
+import implementsLayer.QLHoadonimp;
 import implementsLayer.QLKhachhangimp;
 import implementsLayer.QLNhanvienimp;
 import implementsLayer.QLPhieuDichvuimp;
 import implementsLayer.QLPhongimp;
 import implementsLayer.QLTaiKhoanimp;
+import managerLayer.QLChitietDichvu;
+import managerLayer.QLChitietHoadon;
+import managerLayer.QLDiachi;
+import managerLayer.QLDichvu;
+import managerLayer.QLHoadon;
+import managerLayer.QLKhachhang;
+import managerLayer.QLNhanVien;
+import managerLayer.QLPhieuDichvu;
+import managerLayer.QLPhong;
+import managerLayer.QLTaiKhoan;
 
 import javax.swing.JLabel;
 import javax.imageio.ImageIO;
@@ -138,7 +147,6 @@ public class UIVinaHome extends JFrame {
 			"Tên dịch vụ", "Loại dịch vụ"
 	};
 	private JLabel lbtotal;
-	private JLabel lbsum;
 	private Locale locale = new Locale("vi", "VN");
 	private NumberFormat format = NumberFormat.getCurrencyInstance(locale);
 	private JLabel lblSPhng = new JLabel("Số phòng còn trống:");
@@ -151,6 +159,8 @@ public class UIVinaHome extends JFrame {
 	private QLPhieuDichvuimp phieuDichvuDAO;
 	private QLNhanvienimp nhanVienDAO;
 	private QLTaiKhoanimp taiKhoanDAO;
+	private QLHoadonimp hoadonDAO;
+	private QLChitietHoadonimp chitietHoadonDAO;
 	private NhanVien nhanVien = new NhanVien();
 	private PhieuDichvu phieuDichvu;
 
@@ -165,6 +175,8 @@ public class UIVinaHome extends JFrame {
 		diachiDAO = new QLDiachi(em);
 		chitietdichvuDAO = new QLChitietDichvu(em);
 		phieuDichvuDAO = new QLPhieuDichvu(em);
+		hoadonDAO = new  QLHoadon(em);
+		chitietHoadonDAO = new QLChitietHoadon(em);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
@@ -662,9 +674,9 @@ public class UIVinaHome extends JFrame {
 				}else {
 					suaNV.setEnabled(true);
 					xoaNV.setEnabled(true);
-				}
-				if(nhanVien.equals(nhanVienDAO.timNhanvien(dfmodelDSNV.getValueAt(tableDSNhanvien.getSelectedRow(), 0).toString()))) {
-					xoaNV.setEnabled(false);
+					if(nhanVien.equals(nhanVienDAO.timNhanvien(dfmodelDSNV.getValueAt(tableDSNhanvien.getSelectedRow(), 0).toString()))) {
+						xoaNV.setEnabled(false);
+					}
 				}
 				if(e.getButton()==MouseEvent.BUTTON3)
 					menuNV.show(e.getComponent(),e.getX(),e.getY());
@@ -680,9 +692,9 @@ public class UIVinaHome extends JFrame {
 				}else {
 					suaNV.setEnabled(true);
 					xoaNV.setEnabled(true);
-				}
-				if(nhanVien.equals(nhanVienDAO.timNhanvien(dfmodelDSNV.getValueAt(tableDSNhanvien.getSelectedRow(), 0).toString()))) {
-					xoaNV.setEnabled(false);
+					if(nhanVien.equals(nhanVienDAO.timNhanvien(dfmodelDSNV.getValueAt(tableDSNhanvien.getSelectedRow(), 0).toString()))) {
+						xoaNV.setEnabled(false);
+					}
 				}
 				if(e.getButton()==MouseEvent.BUTTON3)
 					menuNV.show(e.getComponent(),e.getX(),e.getY());
@@ -698,9 +710,9 @@ public class UIVinaHome extends JFrame {
 				}else {
 					suaNV.setEnabled(true);
 					xoaNV.setEnabled(true);
-				}
-				if(nhanVien.equals(nhanVienDAO.timNhanvien(dfmodelDSNV.getValueAt(tableDSNhanvien.getSelectedRow(), 0).toString()))) {
-					xoaNV.setEnabled(false);
+					if(nhanVien.equals(nhanVienDAO.timNhanvien(dfmodelDSNV.getValueAt(tableDSNhanvien.getSelectedRow(), 0).toString()))) {
+						xoaNV.setEnabled(false);
+					}
 				}
 				if(e.getButton()==MouseEvent.BUTTON3)
 					menuNV.show(e.getComponent(),e.getX(),e.getY());
@@ -1107,15 +1119,17 @@ public class UIVinaHome extends JFrame {
 		lbtotal.setText(format.format(phieuDichvu.ThanhTien()));
 	}
 
-	//TODO
 	public class PhieuDichvuUI extends JDialog {
-
-		private JTextField tfPhong = new JTextField();;
+		private JTextField tfPhong = new JTextField();
 		private JTextField tfTienNhan = new JTextField();
 		private JRadioButton rbTructiep = new JRadioButton("Trực tiếp");
 		private JRadioButton rdbtnTrSau = new JRadioButton("Trả sau");
 		private JLabel lblTienTra = new JLabel();
-
+		private JLabel war = new JLabel();
+		private JLabel warr = new JLabel();
+		private JButton btnLuuPDV = new JButton("Thanh toán");
+		private Phong phong;
+		
 		public PhieuDichvuUI() {
 			super(new JFrame(), "Phiếu dịch vụ", true);
 			setBounds(0, 0, 390, 650);
@@ -1202,6 +1216,11 @@ public class UIVinaHome extends JFrame {
 			add(tfPhong);
 			tfPhong.setColumns(10);
 			
+			war.setFont(new Font("Times New Roman", Font.ITALIC, 13));
+			war.setForeground(Color.RED);
+			war.setBounds(76, 201, 130, 16);
+			add(war);
+			
 			JLabel label = new JLabel("==================================================");
 			label.setBounds(10, 212, 354, 14);
 			add(label);
@@ -1243,7 +1262,7 @@ public class UIVinaHome extends JFrame {
 			label.setBounds(10, 451, 354, 14);
 			add(label);
 			
-			JLabel lblTng = new JLabel("Tổng (bao gồm VAT):");
+			JLabel lblTng = new JLabel("Tổng:");
 			lblTng.setFont(new Font("Times New Roman", Font.PLAIN, 18));
 			lblTng.setBounds(10, 470, 50, 21);
 			add(lblTng);
@@ -1270,12 +1289,6 @@ public class UIVinaHome extends JFrame {
 			lblTienTra.setBounds(211, 534, 153, 21);
 			add(lblTienTra);
 			
-			tfTienNhan.setHorizontalAlignment(SwingConstants.RIGHT);
-			tfTienNhan.setFont(new Font("Times New Roman", Font.PLAIN, 18));
-			tfTienNhan.setColumns(10);
-			tfTienNhan.setBounds(234, 502, 130, 20);
-			add(tfTienNhan);
-			
 			JButton btnCancel = new JButton("Thoát");
 			btnCancel.setIcon(new ImageIcon(PhieuDichvuUI.class.getResource("/images/cancel.png")));
 			btnCancel.setFont(new Font("Times New Roman", Font.PLAIN, 18));
@@ -1288,25 +1301,126 @@ public class UIVinaHome extends JFrame {
 				}
 			});
 			
-			JButton btnLuuPDV = new JButton("Thanh toán");
 			btnLuuPDV.setHorizontalTextPosition(SwingConstants.LEADING);
 			btnLuuPDV.setHorizontalAlignment(SwingConstants.LEADING);
 			btnLuuPDV.setIcon(new ImageIcon(PhieuDichvuUI.class.getResource("/images/icons8-arrow-64.png")));
 			btnLuuPDV.setFont(new Font("Times New Roman", Font.PLAIN, 18));
 			btnLuuPDV.setBounds(234, 580, 130, 28);
 			add(btnLuuPDV);
+			btnLuuPDV.setEnabled(false);
 			btnLuuPDV.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
 					if(JOptionPane.showConfirmDialog(null,
-							"Bạn có muốn thêm khách hàng?", "Thêm Khách hàng", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+							"Bạn có muốn lập phiếu dịch vụ?", "Lập phiếu dịch vụ", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 						LapPhieuDichvu();
 					}
 				}});
+			
+			tfTienNhan.setHorizontalAlignment(SwingConstants.RIGHT);
+			tfTienNhan.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+			tfTienNhan.setColumns(10);
+			tfTienNhan.setBounds(234, 502, 130, 20);
+			lblTienTra.setText(format.format(0));
+			add(tfTienNhan);
+			
+			warr.setFont(new Font("Times New Roman", Font.ITALIC, 13));
+			warr.setForeground(Color.RED);
+			warr.setBounds(234, 522, 300, 16);
+			add(warr);
+			
+			tfPhong.getDocument().addDocumentListener(new DocumentListener() {
+				
+				@Override
+				public void removeUpdate(DocumentEvent e) {
+					checktfPhong();
+				}
+				
+				@Override
+				public void insertUpdate(DocumentEvent e) {
+					checktfPhong();
+				}
+				
+				@Override
+				public void changedUpdate(DocumentEvent e) {
+					checktfPhong();
+				}
+			});
+			
+			tfTienNhan.getDocument().addDocumentListener(new DocumentListener() {
+				
+				@Override
+				public void removeUpdate(DocumentEvent e) {
+					checktfTienNhan();
+				}
+				
+				@Override
+				public void insertUpdate(DocumentEvent e) {
+					checktfTienNhan();
+				}
+				
+				@Override
+				public void changedUpdate(DocumentEvent e) {
+					checktfTienNhan();
+				}
+			});
+		}
+		
+		public void checktfPhong() {
+			if(tfPhong.getText().isEmpty()) {
+				war.setText("*Không được để trống");
+				btnLuuPDV.setEnabled(false);
+			}else {
+				boolean isInteger = tfPhong.getText().trim().matches("\\d+");
+				if(!isInteger) {
+					war.setText("*Chỉ nhập chữ số");
+				}else {
+					if(tfPhong.getText().length() < 3) {
+						war.setText("*Số phòng phải đủ 3 chữ số");
+						btnLuuPDV.setEnabled(false);
+					}else if(tfPhong.getText().length() > 3) {
+						war.setText("*Số phòng không quá 3 chữ số");
+						btnLuuPDV.setEnabled(false);
+					}else {
+						war.setText("");
+						phong = phongDAO.timPhong("P"+tfPhong.getText().trim());
+						if(phong == null) {
+							war.setText("*Phòng không tồn tại");
+							btnLuuPDV.setEnabled(false);
+						}else if(!phong.getTinhtrangPhong().equalsIgnoreCase("Đang thuê")) {
+							war.setText("*Phòng đang trống");
+							btnLuuPDV.setEnabled(false);
+						}else {
+							btnLuuPDV.setEnabled(true);
+						}
+					}
+				}
+			}
+		}
+		
+		public void checktfTienNhan() {
+			if(tfTienNhan.getText().isEmpty()) {
+				warr.setText("*Không được để trống");
+				btnLuuPDV.setEnabled(false);
+			}else {
+				boolean isInteger = tfTienNhan.getText().trim().matches("\\d+");
+				if(!isInteger) {
+					warr.setText("*Chỉ nhập chữ số");
+				}else {
+					warr.setText("");
+					if(Double.parseDouble(tfTienNhan.getText().trim()) >= phieuDichvu.ThanhTien()) {
+						lblTienTra.setText(format.format(Double.parseDouble(tfTienNhan.getText().trim()) - phieuDichvu.ThanhTien()));
+						btnLuuPDV.setEnabled(true);
+					}else {
+						lblTienTra.setText(format.format(0));
+						btnLuuPDV.setEnabled(false);
+					}
+				}
+			}
 		}
 		
 		public void LapPhieuDichvu() {
-			phieuDichvu.setNgaylap(LocalDate.now());
+			phieuDichvu.setNgaylap(LocalDateTime.now());
 			for (ChitietPhieuDichvu chitietPhieuDichvu : phieuDichvu.getDschitietPhieuDichvu()) {
 				chitietdichvuDAO.themChitietDichvu(chitietPhieuDichvu);
 				Dichvu dv = chitietPhieuDichvu.getDichvu();
@@ -1314,6 +1428,30 @@ public class UIVinaHome extends JFrame {
 				dichvuDAO.suaDichvu(dv);
 			}
 			if(phieuDichvuDAO.themPhieuDichvu(phieuDichvu)) {
+				if(rdbtnTrSau.isSelected()) {
+					Hoadon hoadon = hoadonDAO.timHoadonPhongDangThue(phong.getMaPhong());
+					List<ChitietHoadon> chitietHoadons = hoadon.getChitietHoadons();
+					ChitietHoadon chitietHoadon = null;
+					for (ChitietHoadon cthd : chitietHoadons) {
+						if(cthd.getPhong().getMaPhong().equals(phong.getMaPhong())) {
+							chitietHoadon = cthd;
+							break;
+						}
+					}
+					List<PhieuDichvu> phieuDichvus = chitietHoadon.getPhieuDichvus();
+					phieuDichvus.add(phieuDichvu);
+					chitietHoadon.setPhieuDichvus(phieuDichvus);
+					
+					
+					int index = chitietHoadons.indexOf(chitietHoadon);
+					chitietHoadons.remove(index);
+					chitietHoadons.add(index, chitietHoadon);
+					
+					hoadon.setChitietHoadons(chitietHoadons);
+					if(!(chitietHoadonDAO.suaChitietHoadon(chitietHoadon) && hoadonDAO.suaHoadon(hoadon))) {
+						JOptionPane.showMessageDialog(null, "Lập phiếu dịch vụ thất bại!!");
+					}
+				}
 				phieuDichvu = null;
 				for (int i = 0; i < 4; i++)
 					spinners[i].setValue(0);
@@ -1321,14 +1459,14 @@ public class UIVinaHome extends JFrame {
 					dfmodelCTHD.removeRow(0);
 				btLaphoadon.setEnabled(false);
 				lbtotal.setText(format.format(0));
-				dispose();
 				JOptionPane.showMessageDialog(null, "Lập phiếu dịch vụ thành công!!");
+				dispose();
 			}else {
 				JOptionPane.showMessageDialog(null, "Lập phiếu dịch vụ thất bại!!");
 			}
 		}
 	}
-
+	
 	public void updateTableKhachHang(){
 		while(dfmodelDSKH.getRowCount() > 0)
 			dfmodelDSKH.removeRow(0);

@@ -1,30 +1,32 @@
-package bussinessLayer;
+package managerLayer;
 
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
-import entity.Giuong;
-import implementsLayer.QLGiuongimp;
+import entity.ChitietPhieuDichvu;
+import implementsLayer.QLChitietDichvuimp;
 
-public class QLGiuong implements QLGiuongimp {
+
+
+public class QLChitietDichvu implements QLChitietDichvuimp {
 	
 	// truy van databse tren mongo ke thua tu implement
 	private EntityManager em;
-	public QLGiuong(EntityManager em) {
+	public QLChitietDichvu(EntityManager em) {
 		super();
 		this.em = em;
 	}
-	// them giuong vao co so du lieu
+	// them chitietphieudichvu vao co so du lieu
 	// true khi ko trung
 	// fasle khi trung
 	@Override
-	public boolean themGiuong(Giuong g) {
+	public boolean themChitietDichvu(ChitietPhieuDichvu ctdv) {
 		EntityTransaction tr=em.getTransaction();
 		try {
 			tr.begin();
-			em.persist(g);
+			em.persist(ctdv);
 			tr.commit();
 			return true;
 		}catch (Exception e) {
@@ -33,22 +35,20 @@ public class QLGiuong implements QLGiuongimp {
 		}
 		return false;
 	}
-	
-
 
 	@Override
-	public Giuong timGiuong(String mag) {
-		return em.find(Giuong.class, mag);
+	public ChitietPhieuDichvu timChitietDichvu(String maPDV) {
+		return em.find(ChitietPhieuDichvu.class, maPDV);
 	}
 	
 
-
+	
 	@Override
-	public boolean xoaGiuong(String mag) {
+	public boolean xoaChitietDichvu(String maPDV) {
 		EntityTransaction tr = em.getTransaction();
 		try {
 			tr.begin();
-			em.remove(timGiuong(mag));
+			em.remove(timChitietDichvu(maPDV));
 			tr.commit();
 			return true;
 		}catch (Exception e) {
@@ -58,13 +58,13 @@ public class QLGiuong implements QLGiuongimp {
 		return false;
 	}
 	
-
+	
 	@Override
-	public boolean suaGiuong(Giuong g) {
+	public boolean suaChitietDichvu(ChitietPhieuDichvu ctdv) {
 		EntityTransaction tr = em.getTransaction();
 		try {
 			tr.begin();
-			em.merge(g);
+			em.merge(ctdv);
 			tr.commit();
 			return true;
 		}catch (Exception e) {
@@ -74,9 +74,9 @@ public class QLGiuong implements QLGiuongimp {
 		return false;
 	}
 
-
+	
 	@Override
-	public List<Giuong> getDSGiuong() {
-		return em.createQuery("from Giuong g",Giuong.class).getResultList();
+	public List<ChitietPhieuDichvu> getDSChitietDichvu() {
+		return em.createQuery("from ChitietPhieuDichvu ctdv",ChitietPhieuDichvu.class).getResultList();
 	}
 }

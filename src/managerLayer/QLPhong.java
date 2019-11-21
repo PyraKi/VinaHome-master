@@ -1,32 +1,27 @@
-package bussinessLayer;
+package managerLayer;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
-import entity.Dichvu;
-import implementsLayer.QLDichvuimp;
+import entity.Phong;
+import implementsLayer.QLPhongimp;
 
-public class QLDichvu implements QLDichvuimp {
+public class QLPhong implements QLPhongimp {
 	
-	// truy van databse tren mongo ke thua tu implement
 	private EntityManager em;
-	
-	public QLDichvu(EntityManager em) {
+	public QLPhong(EntityManager em) {
 		super();
 		this.em = em;
 	}
-	
-	// them dichvu vao co so du lieu
-	// true khi ko trung
-	// fasle khi trung
 	@Override
-	public boolean themDichvu(Dichvu dv) {
+	public boolean themPhong(Phong p) {
 		EntityTransaction tr=em.getTransaction();
 		try {
 			tr.begin();
-			em.persist(dv);
+			em.persist(p);
 			tr.commit();
 			return true;
 		}catch (Exception e) {
@@ -36,21 +31,17 @@ public class QLDichvu implements QLDichvuimp {
 		return false;
 	}
 	
-
-	
 	@Override
-	public Dichvu timDichvu(String madv) {
-		return em.find(Dichvu.class, madv);
+	public Phong timPhong(String map) {
+		return em.find(Phong.class, map);
 	}
-	
 
-	
 	@Override
-	public boolean xoaDichvu(String madv) {
+	public boolean xoaPhong(String map) {
 		EntityTransaction tr = em.getTransaction();
 		try {
 			tr.begin();
-			em.remove(timDichvu(madv));
+			em.remove(timPhong(map));
 			tr.commit();
 			return true;
 		}catch (Exception e) {
@@ -62,11 +53,11 @@ public class QLDichvu implements QLDichvuimp {
 	
 	
 	@Override
-	public boolean suaDichvu(Dichvu dv) {
+	public boolean suaPhong(Phong p) {
 		EntityTransaction tr = em.getTransaction();
 		try {
 			tr.begin();
-			em.merge(dv);
+			em.merge(p);
 			tr.commit();
 			return true;
 		}catch (Exception e) {
@@ -78,7 +69,9 @@ public class QLDichvu implements QLDichvuimp {
 
 	
 	@Override
-	public List<Dichvu> getDSDichvu() {
-		return em.createQuery("from Dichvu dv",Dichvu.class).getResultList();
+	public List<Phong> getDSPhong() {
+		List<Phong> dsPhong = em.createQuery("from Phong p",Phong.class).getResultList();
+		Collections.sort(dsPhong);
+		return dsPhong;
 	}
 }

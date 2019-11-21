@@ -1,31 +1,30 @@
-package bussinessLayer;
+package managerLayer;
 
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
-import entity.DiaChi;
-import implementsLayer.QLDiachiimp;
+import entity.LoaiPhong;
+import implementsLayer.QLLoaiphongimp;
 
-public class QLDiachi implements QLDiachiimp{
+public class QLLoaiphong implements QLLoaiphongimp {
 	
 	// truy van databse tren mongo ke thua tu implement
 	private EntityManager em;
-	public QLDiachi(EntityManager em) {
+	public QLLoaiphong(EntityManager em) {
 		super();
 		this.em = em;
 	}
-	
-	// them diachi vao co so du lieu
+	// them loaiphong vao co so du lieu
 	// true khi ko trung
 	// fasle khi trung
 	@Override
-	public boolean themDiachi(DiaChi dc) {
+	public boolean themLoaiPhong(LoaiPhong lp) {
 		EntityTransaction tr=em.getTransaction();
 		try {
 			tr.begin();
-			em.persist(dc);
+			em.persist(lp);
 			tr.commit();
 			return true;
 		}catch (Exception e) {
@@ -36,18 +35,20 @@ public class QLDiachi implements QLDiachiimp{
 	}
 	
 
+	
 	@Override
-	public DiaChi timDiachi(String maDC) {
-		return em.find(DiaChi.class, maDC);
+	public LoaiPhong timLoaiPhong(String malp) {
+		return em.find(LoaiPhong.class, malp);
 	}
 	
 
+	
 	@Override
-	public boolean xoaDiachi(String maDC) {
+	public boolean xoaLoaiPhong(String malp) {
 		EntityTransaction tr = em.getTransaction();
 		try {
 			tr.begin();
-			em.remove(timDiachi(maDC));
+			em.remove(timLoaiPhong(malp));
 			tr.commit();
 			return true;
 		}catch (Exception e) {
@@ -57,12 +58,13 @@ public class QLDiachi implements QLDiachiimp{
 		return false;
 	}
 	
+	
 	@Override
-	public boolean suaDiachi(DiaChi dc) {
+	public boolean suaLoaiPhong(LoaiPhong lp) {
 		EntityTransaction tr = em.getTransaction();
 		try {
 			tr.begin();
-			em.merge(dc);
+			em.merge(lp);
 			tr.commit();
 			return true;
 		}catch (Exception e) {
@@ -72,8 +74,9 @@ public class QLDiachi implements QLDiachiimp{
 		return false;
 	}
 
+	
 	@Override
-	public List<DiaChi> getDSDiachi() {
-		return em.createQuery("from DiaChi dc",DiaChi.class).getResultList();
+	public List<LoaiPhong> getDSLoaiPhong() {
+		return em.createQuery("from LoaiPhong lp",LoaiPhong.class).getResultList();
 	}
 }

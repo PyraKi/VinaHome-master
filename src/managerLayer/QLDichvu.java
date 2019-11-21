@@ -1,30 +1,32 @@
-package bussinessLayer;
+package managerLayer;
 
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
-import entity.LoaiPhong;
-import implementsLayer.QLLoaiphongimp;
+import entity.Dichvu;
+import implementsLayer.QLDichvuimp;
 
-public class QLLoaiphong implements QLLoaiphongimp {
+public class QLDichvu implements QLDichvuimp {
 	
 	// truy van databse tren mongo ke thua tu implement
 	private EntityManager em;
-	public QLLoaiphong(EntityManager em) {
+	
+	public QLDichvu(EntityManager em) {
 		super();
 		this.em = em;
 	}
-	// them loaiphong vao co so du lieu
+	
+	// them dichvu vao co so du lieu
 	// true khi ko trung
 	// fasle khi trung
 	@Override
-	public boolean themLoaiPhong(LoaiPhong lp) {
+	public boolean themDichvu(Dichvu dv) {
 		EntityTransaction tr=em.getTransaction();
 		try {
 			tr.begin();
-			em.persist(lp);
+			em.persist(dv);
 			tr.commit();
 			return true;
 		}catch (Exception e) {
@@ -37,18 +39,18 @@ public class QLLoaiphong implements QLLoaiphongimp {
 
 	
 	@Override
-	public LoaiPhong timLoaiPhong(String malp) {
-		return em.find(LoaiPhong.class, malp);
+	public Dichvu timDichvu(String madv) {
+		return em.find(Dichvu.class, madv);
 	}
 	
 
 	
 	@Override
-	public boolean xoaLoaiPhong(String malp) {
+	public boolean xoaDichvu(String madv) {
 		EntityTransaction tr = em.getTransaction();
 		try {
 			tr.begin();
-			em.remove(timLoaiPhong(malp));
+			em.remove(timDichvu(madv));
 			tr.commit();
 			return true;
 		}catch (Exception e) {
@@ -60,11 +62,11 @@ public class QLLoaiphong implements QLLoaiphongimp {
 	
 	
 	@Override
-	public boolean suaLoaiPhong(LoaiPhong lp) {
+	public boolean suaDichvu(Dichvu dv) {
 		EntityTransaction tr = em.getTransaction();
 		try {
 			tr.begin();
-			em.merge(lp);
+			em.merge(dv);
 			tr.commit();
 			return true;
 		}catch (Exception e) {
@@ -76,7 +78,7 @@ public class QLLoaiphong implements QLLoaiphongimp {
 
 	
 	@Override
-	public List<LoaiPhong> getDSLoaiPhong() {
-		return em.createQuery("from LoaiPhong lp",LoaiPhong.class).getResultList();
+	public List<Dichvu> getDSDichvu() {
+		return em.createQuery("from Dichvu dv",Dichvu.class).getResultList();
 	}
 }

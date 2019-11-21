@@ -16,4 +16,6 @@ public interface QLHoadonimp {
 
 	List<Hoadon> getDSHoadon();
 
+	Hoadon timHoadonPhongDangThue(String maPhong);
+
 }

@@ -1,4 +1,4 @@
-package bussinessLayer;
+package managerLayer;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;

@@ -1,6 +1,7 @@
 package entity;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedNativeQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -22,11 +24,9 @@ public class Hoadon {
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="maKH")
 	private KhachHang khachHang;
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="maPhong")
-	private Phong phong;
+	@OneToMany(fetch=FetchType.LAZY)
+	private List<ChitietHoadon> chitietHoadons;
 	private LocalDate ngayLap;
-	private Double tongTien;
 	public String getMaHD() {
 		return maHD;
 	}
@@ -45,23 +45,17 @@ public class Hoadon {
 	public void setKhachHang(KhachHang khachHang) {
 		this.khachHang = khachHang;
 	}
-	public Phong getPhong() {
-		return phong;
+	public List<ChitietHoadon> getChitietHoadons() {
+		return chitietHoadons;
 	}
-	public void setPhong(Phong phong) {
-		this.phong = phong;
+	public void setChitietHoadons(List<ChitietHoadon> chitietHoadons) {
+		this.chitietHoadons = chitietHoadons;
 	}
 	public LocalDate getNgayLap() {
 		return ngayLap;
 	}
 	public void setNgayLap(LocalDate ngayLap) {
 		this.ngayLap = ngayLap;
-	}
-	public Double getTongTien() {
-		return tongTien;
-	}
-	public void setTongTien(Double tongTien) {
-		this.tongTien = tongTien;
 	}
 	@Override
 	public int hashCode() {
@@ -86,15 +80,14 @@ public class Hoadon {
 			return false;
 		return true;
 	}
-	public Hoadon(String maHD, NhanVien nhanVien, KhachHang khachHang, Phong phong, LocalDate ngayLap,
-			Double tongTien) {
+	public Hoadon(String maHD, NhanVien nhanVien, KhachHang khachHang, List<ChitietHoadon> chitietHoadons,
+			LocalDate ngayLap) {
 		super();
 		this.maHD = maHD;
 		this.nhanVien = nhanVien;
 		this.khachHang = khachHang;
-		this.phong = phong;
+		this.chitietHoadons = chitietHoadons;
 		this.ngayLap = ngayLap;
-		this.tongTien = tongTien;
 	}
 	public Hoadon() {
 		super();
@@ -108,11 +101,17 @@ public class Hoadon {
 		builder.append(nhanVien);
 		builder.append(", khachHang=");
 		builder.append(khachHang);
-		builder.append(", phong=");
-		builder.append(phong);
+		builder.append(", chitietHoadons=");
+		builder.append(chitietHoadons);
 		builder.append(", ngayLap=");
 		builder.append(ngayLap);
 		builder.append("]");
 		return builder.toString();
+	}
+	public double TongTien() {
+		double s = 0;
+		for (ChitietHoadon chitietHoadon : chitietHoadons) 
+			s += chitietHoadon.thanhTien();
+		return s;
 	}
 }

@@ -1,30 +1,30 @@
-package bussinessLayer;
+package managerLayer;
 
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
-import entity.PhieuDichvu;
-import implementsLayer.QLPhieuDichvuimp;
+import entity.LoaiDichvu;
+import implementsLayer.QLLoaiDichvuimp;
 
-public class QLPhieuDichvu implements QLPhieuDichvuimp {
+public class QLLoaiDichvu implements QLLoaiDichvuimp {
 	
 	// truy van databse tren mongo ke thua tu implement
 	private EntityManager em;
-	public QLPhieuDichvu(EntityManager em) {
+	public QLLoaiDichvu(EntityManager em) {
 		super();
 		this.em = em;
 	}
-	// them phieudichvu vao co so du lieu
+	// them loaidichvu vao co so du lieu
 	// true khi ko trung
 	// fasle khi trung
 	@Override
-	public boolean themPhieuDichvu(PhieuDichvu pdv) {
+	public boolean themLoaiDichvu(LoaiDichvu ldv) {
 		EntityTransaction tr=em.getTransaction();
 		try {
 			tr.begin();
-			em.persist(pdv);
+			em.persist(ldv);
 			tr.commit();
 			return true;
 		}catch (Exception e) {
@@ -37,18 +37,18 @@ public class QLPhieuDichvu implements QLPhieuDichvuimp {
 
 	
 	@Override
-	public PhieuDichvu timPhieuDichvu(String mapdv) {
-		return em.find(PhieuDichvu.class, mapdv);
+	public LoaiDichvu timLoaiDichvu(String maldv) {
+		return em.find(LoaiDichvu.class, maldv);
 	}
 	
 
 	
 	@Override
-	public boolean xoaPhieuDichvu(String mapdv) {
+	public boolean xoaLoaiDichvu(String maldv) {
 		EntityTransaction tr = em.getTransaction();
 		try {
 			tr.begin();
-			em.remove(timPhieuDichvu(mapdv));
+			em.remove(timLoaiDichvu(maldv));
 			tr.commit();
 			return true;
 		}catch (Exception e) {
@@ -60,11 +60,11 @@ public class QLPhieuDichvu implements QLPhieuDichvuimp {
 	
 	
 	@Override
-	public boolean suaPhieuDichvu(PhieuDichvu pdv) {
+	public boolean suaLoaiDichvu(LoaiDichvu ldv) {
 		EntityTransaction tr = em.getTransaction();
 		try {
 			tr.begin();
-			em.merge(pdv);
+			em.merge(ldv);
 			tr.commit();
 			return true;
 		}catch (Exception e) {
@@ -76,7 +76,7 @@ public class QLPhieuDichvu implements QLPhieuDichvuimp {
 
 	
 	@Override
-	public List<PhieuDichvu> getDSPhieuDichvu() {
-		return em.createQuery("from PhieuDichvu pdv",PhieuDichvu.class).getResultList();
+	public List<LoaiDichvu> getDSLoaiDichvu() {
+		return em.createQuery("from LoaiDichvu ldv",LoaiDichvu.class).getResultList();
 	}
 }
