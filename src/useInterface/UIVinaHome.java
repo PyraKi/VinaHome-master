@@ -29,6 +29,7 @@ import entity.DiaChi;
 import entity.Dichvu;
 import entity.Hoadon;
 import entity.KhachHang;
+import entity.LoaiDichvu;
 import entity.NhanVien;
 import entity.PhieuDichvu;
 import entity.Phong;
@@ -39,6 +40,7 @@ import implementsLayer.QLDiachiimp;
 import implementsLayer.QLDichvuimp;
 import implementsLayer.QLHoadonimp;
 import implementsLayer.QLKhachhangimp;
+import implementsLayer.QLLoaiDichvuimp;
 import implementsLayer.QLNhanvienimp;
 import implementsLayer.QLPhieuDichvuimp;
 import implementsLayer.QLPhongimp;
@@ -49,6 +51,7 @@ import managerLayer.QLDiachi;
 import managerLayer.QLDichvu;
 import managerLayer.QLHoadon;
 import managerLayer.QLKhachhang;
+import managerLayer.QLLoaiDichvu;
 import managerLayer.QLNhanVien;
 import managerLayer.QLPhieuDichvu;
 import managerLayer.QLPhong;
@@ -161,6 +164,7 @@ public class UIVinaHome extends JFrame {
 	private QLTaiKhoanimp taiKhoanDAO;
 	private QLHoadonimp hoadonDAO;
 	private QLChitietHoadonimp chitietHoadonDAO;
+	private QLLoaiDichvuimp loaiDichvuDAO;
 	private NhanVien nhanVien = new NhanVien();
 	private PhieuDichvu phieuDichvu;
 
@@ -177,6 +181,7 @@ public class UIVinaHome extends JFrame {
 		phieuDichvuDAO = new QLPhieuDichvu(em);
 		hoadonDAO = new  QLHoadon(em);
 		chitietHoadonDAO = new QLChitietHoadon(em);
+		loaiDichvuDAO = new QLLoaiDichvu(em);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
@@ -264,37 +269,31 @@ public class UIVinaHome extends JFrame {
 			}
 		});
 
-		JMenu mnQLPhong = new JMenu("Phòng");
+		JMenuItem mnQLPhong = new JMenuItem("Phòng");
+		mnQLPhong.setIcon(new ImageIcon(UIVinaHome.class.getResource("/images/room.png")));
 		mnQLPhong.setFont(new Font("Times New Roman", Font.PLAIN, 20));
 		mnQuanly.add(mnQLPhong);
+		mnQLPhong.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				displayFormDSPhong();
+			}
+		});
 
-		JMenuItem itemSuaphong = new JMenuItem("Sửa phòng");
-		itemSuaphong.setFont(new Font("Times New Roman", Font.PLAIN, 20));
-		mnQLPhong.add(itemSuaphong);
 
-		JMenuItem itemThemPhong = new JMenuItem("Thêm phòng");
-		itemThemPhong.setFont(new Font("Times New Roman", Font.PLAIN, 20));
-		mnQLPhong.add(itemThemPhong);
-
-		JMenuItem ItemXoaPhong = new JMenuItem("Xóa Phòng");
-		ItemXoaPhong.setFont(new Font("Times New Roman", Font.PLAIN, 20));
-		mnQLPhong.add(ItemXoaPhong);
-
-		JMenu mnDichvu = new JMenu("Dịch vụ");
+		JMenuItem mnDichvu = new JMenuItem("Dịch vụ");
+		mnDichvu.setIcon(new ImageIcon(UIVinaHome.class.getResource("/images/dichvu.png")));
 		mnDichvu.setFont(new Font("Times New Roman", Font.PLAIN, 20));
 		mnQuanly.add(mnDichvu);
+		mnDichvu.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				displayFormDSDichvu();				
+			}
+		});
 
-		JMenuItem itemThemDV = new JMenuItem("Thêm dịch vụ");
-		itemThemDV.setFont(new Font("Times New Roman", Font.PLAIN, 20));
-		mnDichvu.add(itemThemDV);
-
-		JMenuItem itemSuaDV = new JMenuItem("Sửa dịch vụ");
-		itemSuaDV.setFont(new Font("Times New Roman", Font.PLAIN, 20));
-		mnDichvu.add(itemSuaDV);
-
-		JMenuItem itemXoaDichvu = new JMenuItem("Xóa dịch vụ");
-		itemXoaDichvu.setFont(new Font("Times New Roman", Font.PLAIN, 20));
-		mnDichvu.add(itemXoaDichvu);
 
 		JMenuItem QLHoadon = new JMenuItem("Hóa đơn");
 		QLHoadon.setIcon(new ImageIcon(UIVinaHome.class.getResource("/images/revenue_cycle.png")));
@@ -312,7 +311,7 @@ public class UIVinaHome extends JFrame {
 		itemThongke.setIcon(new ImageIcon(UIVinaHome.class.getResource("/images/char.png")));
 		itemThongke.setFont(new Font("Times New Roman", Font.PLAIN, 20));
 		mnQuanly.add(itemThongke);
-		itemThongke.addActionListener(new ActionListener() {
+		itemThongke.addActionListener(new ActionListener() {	
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -395,7 +394,7 @@ public class UIVinaHome extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new KhachhangUI(null, "add").setVisible(true);				
+				new UIKhachhang(null, "add").setVisible(true);				
 			}
 		});
 		
@@ -412,7 +411,7 @@ public class UIVinaHome extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String makh = dfmodelDSKH.getValueAt(tableDSKhachhang.getSelectedRow(), 0).toString();
 				KhachHang khachHang = khachhangDAO.timKhachHang(makh);
-				new KhachhangUI(khachHang, "edit").setVisible(true);				
+				new UIKhachhang(khachHang, "edit").setVisible(true);				
 			}
 		});
 		suaKH.setIcon(new ImageIcon(UIVinaHome.class.getResource("/images/edit_customer.png")));
@@ -426,7 +425,7 @@ public class UIVinaHome extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String makh = dfmodelDSKH.getValueAt(tableDSKhachhang.getSelectedRow(), 0).toString();
 				KhachHang khachHang = khachhangDAO.timKhachHang(makh);
-				new KhachhangUI(khachHang, "remove").setVisible(true);				
+				new UIKhachhang(khachHang, "remove").setVisible(true);				
 			}
 		});
 		
@@ -583,7 +582,7 @@ public class UIVinaHome extends JFrame {
 		btLaphoadon.setFont(new Font("Times New Roman", Font.BOLD, 26));
 		btLaphoadon.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new PhieuDichvuUI().setVisible(true);
+				new UIPhieuDichvu().setVisible(true);
 			}
 		});
 		btLaphoadon.setEnabled(false);
@@ -633,7 +632,7 @@ public class UIVinaHome extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new NhanvienUI(null, "add").setVisible(true);		
+				new UINhanvien(null, "add").setVisible(true);		
 			}
 		});
 		
@@ -645,7 +644,7 @@ public class UIVinaHome extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String maNV = dfmodelDSNV.getValueAt(tableDSNhanvien.getSelectedRow(), 0).toString();
 				NhanVien nv = nhanVienDAO.timNhanvien(maNV);
-				new NhanvienUI(nv, "edit").setVisible(true);				
+				new UINhanvien(nv, "edit").setVisible(true);				
 			}
 		});
 		suaNV.setIcon(new ImageIcon(UIVinaHome.class.getResource("/images/edit_customer.png")));
@@ -660,7 +659,7 @@ public class UIVinaHome extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String maNV = dfmodelDSNV.getValueAt(tableDSNhanvien.getSelectedRow(), 0).toString();
 				NhanVien nv = nhanVienDAO.timNhanvien(maNV);
-				new NhanvienUI(nv, "remove").setVisible(true);					
+				new UINhanvien(nv, "remove").setVisible(true);					
 			}
 		});
 		menuNV.add(xoaNV);
@@ -882,61 +881,10 @@ public class UIVinaHome extends JFrame {
 			phongs[index].setPreferredSize(new Dimension(200, 220));
 			phongs[index].setOpaque(true);
 			//TODO
-			String details =
-					"<html>" + 
-					"<head>" + 
-					"<meta name='viewport' content='width=device-width, initial-scale=1'>" + 
-					"<style>" + 
-					"	.card {" + 
-					"	  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);" + 
-					"	  transition: 0.3s;" + 
-					"	  width: 20%;" + 
-					"	  border: 2px solid rgba(168, 255, 232);" + 
-					"	}" + 
-					"	.card:hover {" + 
-					"	  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);" + 
-					"	}" + 
-					"	.container {" + 
-					"	  padding: 2px 16px;" + 
-					"	}" + 
-					"	input {" + 
-					"		border-radius: 3px;" + 
-					"	}" + 
-					"</style>" + 
-					"</head>" + 
-					"<body>" + 
-					"<div class='card'>" + 
-					"	  <div class='container'>" + 
-					"	   <form>" + 
-					"	   		<table>" + 
-					"	   			<tr>" + 
-					"	   				<th><p>Phòng: </p></th>" + 
-					"	   				<th><input type='text' name='phong' style='width: 270px;' placeholder='"
-																					+phong.getSoPhong()+"'></th>" + 
-					"	   			</tr>" + 
-					"	   			<tr>" + 
-					"	   				<th><p>Giường: </p></th>" + 
-					"	   				<th><input type='text' name='giuong' style='width: 270px;'></th>" + 
-					"	   			</tr>" + 
-					"	   			<tr>" + 
-					"	   				<th><p>Phong Cảnh: </p></th>" + 
-					"	   				<th><input type='text' name='phongcanh' style='width: 270px;'></th>" + 
-					"	   			</tr> " + 
-					"	   			<tr>" + 
-					"	   				<th><p>Số Lượng Tối Đa: </p></th>" + 
-					"	   				<th><input type='number' name='soluong' style='width: 270px;'></th>" + 
-					"	   			</tr>" + 
-					"	   		</table>" + 
-					"	   		<hr>" + 
-					"	   		<b>Đóng góp: </b>" + 
-					"	   		<textarea rows='7' cols='47'></textarea>" + 
-					"	   </form> " + 
-					"	  </div>" + 
-					"	</div>" + 
-					"</body>" + 
-					"</html> ";
-			phongs[index].setToolTipText(details);
-			phongs[index].getToolkit();
+//			String details = "<html><img src='\"" + new ImageIcon(UIVinaHome.class.getResource("/images/booking.png")) + "'\">";
+//			
+//			phongs[index].setToolTipText(details);
+//			phongs[index].getToolkit();
 			
 			//TODO
 			JPopupMenu menuPhong = new JPopupMenu();
@@ -1025,14 +973,35 @@ public class UIVinaHome extends JFrame {
 			capnhatDV.setFont(new Font("Times New Roman", Font.PLAIN, 22));
 			capnhatDV.setIcon(new ImageIcon(UIVinaHome.class.getResource("/images/business-management-icon.png")));
 			menuDV.add(capnhatDV);
+			capnhatDV.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					new UIDichvu(dichvu, "edit").setVisible(true);
+				}
+			});
 			JMenuItem themDV = new JMenuItem("Thêm dịch vụ");
 			themDV.setFont(new Font("Times New Roman", Font.PLAIN, 22));
 			themDV.setIcon(new ImageIcon(UIVinaHome.class.getResource("/images/add-service.png")));
 			menuDV.add(themDV);
+			themDV.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					new UIDichvu(null, "add").setVisible(true);
+				}
+			});
 			JMenuItem xoaDV = new JMenuItem("Xóa dịch vụ");
 			xoaDV.setFont(new Font("Times New Roman", Font.PLAIN, 22));
 			xoaDV.setIcon(new ImageIcon(UIVinaHome.class.getResource("/images/remove-service.png")));
 			menuDV.add(xoaDV);
+			xoaDV.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					new UIDichvu(dichvu, "remove").setVisible(true);
+				}
+			});
 			
 			panel.addMouseListener(new MouseAdapter() {
 				
@@ -1050,13 +1019,13 @@ public class UIVinaHome extends JFrame {
 			label.setIcon(new ImageIcon(UIVinaHome.class.getResource(img)));
 			b1.add(label);
 			dv.add(b1 = Box.createHorizontalBox());
-			label = new JLabel("Phở bò");
+			label = new JLabel();
 			label.setText(dichvu.getTenDV());
 			label.setHorizontalAlignment(SwingConstants.CENTER);
 			label.setFont(new Font("Times New Roman", Font.BOLD, 24));
 			b1.add(label);
 			dv.add(b1 = Box.createHorizontalBox());
-			JLabel gia = new JLabel("20000 VND");
+			JLabel gia = new JLabel();
 			gia.setFont(new Font("Times New Roman", Font.BOLD, 24));
 			gia.setText(format.format(dichvu.getGia()));
 			panel_DSDichvu.add(panel);
@@ -1118,8 +1087,185 @@ public class UIVinaHome extends JFrame {
 		}
 		lbtotal.setText(format.format(phieuDichvu.ThanhTien()));
 	}
-
-	public class PhieuDichvuUI extends JDialog {
+	
+	//TODO
+	public class UIDichvu extends JFrame {
+		
+		private JTextField tfMaDV = new JTextField();
+		private JTextField tfTenDV = new JTextField();
+		private JTextField tfGiaDV = new JTextField();
+		private JComboBox<String> loaiDV = new JComboBox<String>();
+		private String[] tenLDV;
+		private JSpinner spinner = new JSpinner();
+		
+		public UIDichvu(Dichvu dichvu, String action) {
+			setBounds(0, 0, 320, 500);
+			setLocationRelativeTo(null);
+			getContentPane().setLayout(new BorderLayout(0, 0));
+			getContentPane().setBackground(Color.WHITE);
+			JPanel panelDichvu = new JPanel();
+			panelDichvu.setBackground(Color.WHITE);
+			getContentPane().add(panelDichvu, BorderLayout.CENTER);
+			
+			Box b, b1, b2;
+			tenLDV = new String[loaiDichvuDAO.getDSLoaiDichvu().size()];
+			int index = 0;
+			for (LoaiDichvu loaiDichvu : loaiDichvuDAO.getDSLoaiDichvu()) {
+				tenLDV[index++] = loaiDichvu.getTenLDV();
+			}
+			loaiDV.setModel(new DefaultComboBoxModel<String>(tenLDV));
+			loaiDV.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					updateMaDV();					
+				}
+			});
+			
+			panelDichvu.add(b = Box.createVerticalBox());
+			b.add(b1 = Box.createHorizontalBox());
+				b1.add(Box.createHorizontalStrut(30));
+				JLabel lblHinh = new JLabel();
+				if(action.equalsIgnoreCase("add")) {
+					lblHinh.setIcon(new ImageIcon(UIDichvu.class.getResource("/images/dichvu/service.jpg")));
+				}else {
+					try {
+						String resource = "/images/dichvu/"+dichvu.getMaDV()+".jpg";
+						Image img = ImageIO.read(getClass().getResource(resource));
+						lblHinh.setIcon(new ImageIcon(img));
+						
+						tfMaDV.setText(dichvu.getMaDV());
+						tfTenDV.setText(dichvu.getTenDV());
+						tfGiaDV.setText(Double.toString(dichvu.getGia()));
+					} catch (Exception ex) {
+						lblHinh.setIcon(new ImageIcon(UIDichvu.class.getResource("/images/dichvu/service.jpg")));
+						ex.printStackTrace();
+					}
+				}
+				b1.add(lblHinh);
+				b1.add(Box.createHorizontalStrut(30));
+				
+			b.add(Box.createVerticalStrut(10));	
+			b.add(b1 = Box.createVerticalBox());
+			b1.add(b2 = Box.createHorizontalBox());
+				JLabel label = new JLabel("Mã dịch vụ:");
+				label.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+				b2.add(label);
+				b2.add(Box.createHorizontalStrut(28));
+				tfMaDV.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+				b2.add(tfMaDV);
+				tfMaDV.setEditable(false);
+		
+			b1.add(Box.createVerticalStrut(10));	
+			b1.add(b2 = Box.createHorizontalBox());
+				label = new JLabel("Loại dịch vụ:");
+				label.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+				b2.add(label);
+				b2.add(Box.createHorizontalStrut(20));
+				loaiDV.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+				b2.add(loaiDV);
+				
+			b1.add(Box.createVerticalStrut(10));	
+			b1.add(b2 = Box.createHorizontalBox());
+				label = new JLabel("Tên dịch vụ:");
+				label.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+				b2.add(label);
+				b2.add(Box.createHorizontalStrut(25));
+				tfTenDV.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+				b2.add(tfTenDV);
+			
+			b1.add(Box.createVerticalStrut(10));	
+			b1.add(b2 = Box.createHorizontalBox());
+				label = new JLabel("Giá dịch vụ:");
+				label.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+				b2.add(label);
+				b2.add(Box.createHorizontalStrut(27));
+				tfGiaDV.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+				b2.add(tfGiaDV);
+				
+			b1.add(Box.createVerticalStrut(10));	
+			b1.add(b2 = Box.createHorizontalBox());
+				label = new JLabel("Số lượng dịch vụ:");
+				label.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+				b2.add(label);
+				b2.add(Box.createHorizontalStrut(45));
+				int value = 0;
+				if(!action.equalsIgnoreCase("add"))
+					value = dichvu.getSoluong();
+				spinner.setModel(new SpinnerNumberModel(value, 0, 999999, 1));
+				spinner.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+				b2.add(spinner);
+				
+			b1.add(Box.createVerticalStrut(30));	
+			b1.add(b2 = Box.createHorizontalBox());
+				if(action.equalsIgnoreCase("add")) {
+					JButton btnclear = new JButton("clear");
+					btnclear.setIcon(new ImageIcon(UIDichvu.class.getResource("/images/clear.png")));
+					btnclear.setFont(new Font("Times New Roman", Font.BOLD, 20));
+					b2.add(btnclear);
+					b2.add(Box.createHorizontalGlue());
+					JButton btnThem = new JButton("Thêm");
+					btnThem.setFont(new Font("Times New Roman", Font.BOLD, 20));
+					btnThem.setIcon(new ImageIcon(UIDichvu.class.getResource("/images/business-management-icon.png")));
+					btnThem.setHorizontalTextPosition(SwingConstants.LEADING);
+					btnThem.setHorizontalAlignment(SwingConstants.LEADING);
+					b2.add(btnThem);
+					updateMaDV();
+				}else {
+					JButton btnThoat = new JButton("Thoát");
+					btnThoat.setIcon(new ImageIcon(UIDichvu.class.getResource("/images/back.png")));
+					btnThoat.setFont(new Font("Times New Roman", Font.BOLD, 20));
+					b2.add(btnThoat);
+					btnThoat.addMouseListener(new MouseAdapter() {
+						@Override
+						public void mouseClicked(MouseEvent e) {
+							if(JOptionPane.showConfirmDialog(null,
+									"Bạn có thoát?", "Thoát", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+								dispose();
+						}
+					});
+					b2.add(Box.createHorizontalGlue());
+					if(action.equalsIgnoreCase("edit")) {
+						JButton btnSua = new JButton("Sửa");
+						btnSua.setFont(new Font("Times New Roman", Font.BOLD, 20));
+						btnSua.setIcon(new ImageIcon(UIDichvu.class.getResource("/images/add-service.png")));
+						btnSua.setHorizontalTextPosition(SwingConstants.LEADING);
+						btnSua.setHorizontalAlignment(SwingConstants.LEADING);
+						b2.add(btnSua);
+					}
+					else {
+						JButton btnXoa = new JButton("Xóa");
+						btnXoa.setFont(new Font("Times New Roman", Font.BOLD, 20));
+						btnXoa.setIcon(new ImageIcon(UIDichvu.class.getResource("/images/remove-service.png")));
+						btnXoa.setHorizontalTextPosition(SwingConstants.LEADING);
+						btnXoa.setHorizontalAlignment(SwingConstants.LEADING);
+						b2.add(btnXoa);
+					}
+				}
+		}
+		//TODO
+		public void them() {
+			
+		}
+		
+		public void updateMaDV() {
+			String item = loaiDV.getSelectedItem().toString();
+			int value = 0;
+			for (Dichvu dv : dichvuDAO.getDSDichvu()) {
+				if(dv.getLoaiDichvu().getTenLDV().equalsIgnoreCase(item)) {
+					value++;
+				}
+			}
+			item = loaiDichvuDAO.timTheotenLDV(item).getMaLDV();
+			do {
+				value++;
+				item = String.format("%s%03d", item, value);
+			}while(dichvuDAO.timDichvu(item) != null);
+			tfMaDV.setText(item);
+		}
+	}
+	
+	public class UIPhieuDichvu extends JDialog {
 		private JTextField tfPhong = new JTextField();
 		private JTextField tfTienNhan = new JTextField();
 		private JRadioButton rbTructiep = new JRadioButton("Trực tiếp");
@@ -1130,7 +1276,7 @@ public class UIVinaHome extends JFrame {
 		private JButton btnLuuPDV = new JButton("Thanh toán");
 		private Phong phong;
 		
-		public PhieuDichvuUI() {
+		public UIPhieuDichvu() {
 			super(new JFrame(), "Phiếu dịch vụ", true);
 			setBounds(0, 0, 390, 650);
 			setLocationRelativeTo(null);
@@ -1290,7 +1436,7 @@ public class UIVinaHome extends JFrame {
 			add(lblTienTra);
 			
 			JButton btnCancel = new JButton("Thoát");
-			btnCancel.setIcon(new ImageIcon(PhieuDichvuUI.class.getResource("/images/cancel.png")));
+			btnCancel.setIcon(new ImageIcon(UIPhieuDichvu.class.getResource("/images/cancel.png")));
 			btnCancel.setFont(new Font("Times New Roman", Font.PLAIN, 18));
 			btnCancel.setBounds(10, 580, 130, 28);
 			add(btnCancel);
@@ -1303,7 +1449,7 @@ public class UIVinaHome extends JFrame {
 			
 			btnLuuPDV.setHorizontalTextPosition(SwingConstants.LEADING);
 			btnLuuPDV.setHorizontalAlignment(SwingConstants.LEADING);
-			btnLuuPDV.setIcon(new ImageIcon(PhieuDichvuUI.class.getResource("/images/icons8-arrow-64.png")));
+			btnLuuPDV.setIcon(new ImageIcon(UIPhieuDichvu.class.getResource("/images/icons8-arrow-64.png")));
 			btnLuuPDV.setFont(new Font("Times New Roman", Font.PLAIN, 18));
 			btnLuuPDV.setBounds(234, 580, 130, 28);
 			add(btnLuuPDV);
@@ -1493,7 +1639,7 @@ public class UIVinaHome extends JFrame {
 		});
 	}
 	
-	public class KhachhangUI extends JDialog {
+	public class UIKhachhang extends JDialog {
 		private Date today = new Date();
 		private JTextField tfMaKH = new JTextField();
 		private JTextField tfTinh = new JTextField();
@@ -1513,7 +1659,7 @@ public class UIVinaHome extends JFrame {
 		private boolean clear = false;
 		private KhachHang khachHang;
 		
-		public KhachhangUI(KhachHang khachHang, String action) {
+		public UIKhachhang(KhachHang khachHang, String action) {
 			super(new JFrame(), "Thông tin khách hàng", true);
 			setBounds(0, 0, 360, 495);
 			setResizable(false);
@@ -1671,7 +1817,7 @@ public class UIVinaHome extends JFrame {
 			JButton btnclear = new JButton("clear");
 			btnclear.setBounds(10, 433, 89, 25);
 			panel_thongtinKH.add(btnclear);
-			btnclear.setIcon(new ImageIcon(KhachhangUI.class.getResource("/images/clear.png")));
+			btnclear.setIcon(new ImageIcon(UIKhachhang.class.getResource("/images/clear.png")));
 			btnclear.setFont(new Font("Times New Roman", Font.BOLD, 20));
 			btnclear.addMouseListener(new MouseAdapter () {
 
@@ -1695,7 +1841,7 @@ public class UIVinaHome extends JFrame {
 			
 			if(action.equalsIgnoreCase("add")) {
 				JButton btnThem = new JButton("Thêm");
-				btnThem.setIcon(new ImageIcon(KhachhangUI.class.getResource("/images/add_customer.png")));
+				btnThem.setIcon(new ImageIcon(UIKhachhang.class.getResource("/images/add_customer.png")));
 				btnThem.setHorizontalTextPosition(SwingConstants.LEADING);
 				btnThem.setHorizontalAlignment(SwingConstants.LEADING);
 				btnThem.setFont(new Font("Times New Roman", Font.BOLD, 20));
@@ -1727,7 +1873,7 @@ public class UIVinaHome extends JFrame {
 				
 				if(action.equalsIgnoreCase("edit")) {
 					JButton btnSua = new JButton("Sửa");
-					btnSua.setIcon(new ImageIcon(KhachhangUI.class.getResource("/images/edit_customer.png")));
+					btnSua.setIcon(new ImageIcon(UIKhachhang.class.getResource("/images/edit_customer.png")));
 					btnSua.setHorizontalTextPosition(SwingConstants.LEADING);
 					btnSua.setHorizontalAlignment(SwingConstants.LEADING);
 					btnSua.setFont(new Font("Times New Roman", Font.BOLD, 20));
@@ -1744,7 +1890,7 @@ public class UIVinaHome extends JFrame {
 					});
 				}else {
 					JButton btnXoa = new JButton("Xóa");
-					btnXoa.setIcon(new ImageIcon(KhachhangUI.class.getResource("/images/remove_customer.png")));
+					btnXoa.setIcon(new ImageIcon(UIKhachhang.class.getResource("/images/remove_customer.png")));
 					btnXoa.setHorizontalTextPosition(SwingConstants.LEADING);
 					btnXoa.setHorizontalAlignment(SwingConstants.LEADING);
 					btnXoa.setFont(new Font("Times New Roman", Font.BOLD, 20));
@@ -1901,7 +2047,7 @@ public class UIVinaHome extends JFrame {
 	}
 	
 	//Hiện thị from nhân viên
-	public class NhanvienUI extends JDialog{
+	public class UINhanvien extends JDialog{
 		private Date today = new Date();
 		private JTextField tfMaNV = new JTextField();
 		private JTextField tfEmail = new JTextField();
@@ -1924,7 +2070,7 @@ public class UIVinaHome extends JFrame {
 		private JTextField tfTenTK;
 		private JPasswordField passwordField;
 		
-		public NhanvienUI(NhanVien nv, String action) {
+		public UINhanvien(NhanVien nv, String action) {
 			super(new JFrame(), "Thông tin nhân viên", true);
 			setBounds(0, 0, 360, 620);
 			setResizable(false);
@@ -2125,7 +2271,7 @@ public class UIVinaHome extends JFrame {
 			JButton btnclear = new JButton("clear");
 			btnclear.setBounds(10, 558, 89, 25);
 			panel_thongtinNV.add(btnclear);
-			btnclear.setIcon(new ImageIcon(NhanvienUI.class.getResource("/images/clear.png")));
+			btnclear.setIcon(new ImageIcon(UINhanvien.class.getResource("/images/clear.png")));
 			btnclear.setFont(new Font("Times New Roman", Font.BOLD, 20));
 			btnclear.addMouseListener(new MouseAdapter () {
 
@@ -2152,7 +2298,7 @@ public class UIVinaHome extends JFrame {
 			
 			if(action.equalsIgnoreCase("add")) {
 				JButton btnThem = new JButton("Thêm");
-				btnThem.setIcon(new ImageIcon(NhanvienUI.class.getResource("/images/add_customer.png")));
+				btnThem.setIcon(new ImageIcon(UINhanvien.class.getResource("/images/add_customer.png")));
 				btnThem.setHorizontalTextPosition(SwingConstants.LEADING);
 				btnThem.setHorizontalAlignment(SwingConstants.LEADING);
 				btnThem.setFont(new Font("Times New Roman", Font.BOLD, 20));
@@ -2187,7 +2333,7 @@ public class UIVinaHome extends JFrame {
 				
 				if(action.equalsIgnoreCase("edit")) {
 					JButton btnSua = new JButton("Sửa");
-					btnSua.setIcon(new ImageIcon(NhanvienUI.class.getResource("/images/edit_customer.png")));
+					btnSua.setIcon(new ImageIcon(UINhanvien.class.getResource("/images/edit_customer.png")));
 					btnSua.setHorizontalTextPosition(SwingConstants.LEADING);
 					btnSua.setHorizontalAlignment(SwingConstants.LEADING);
 					btnSua.setFont(new Font("Times New Roman", Font.BOLD, 20));
@@ -2204,7 +2350,7 @@ public class UIVinaHome extends JFrame {
 					});
 				}else {
 					JButton btnXoa = new JButton("Xóa");
-					btnXoa.setIcon(new ImageIcon(NhanvienUI.class.getResource("/images/remove_customer.png")));
+					btnXoa.setIcon(new ImageIcon(UINhanvien.class.getResource("/images/remove_customer.png")));
 					btnXoa.setHorizontalTextPosition(SwingConstants.LEADING);
 					btnXoa.setHorizontalAlignment(SwingConstants.LEADING);
 					btnXoa.setFont(new Font("Times New Roman", Font.BOLD, 20));

@@ -1,6 +1,5 @@
-/entity/
-/implementsLayer/
-/managerLayer/
-/useInterface/
 /database/
 /images/
+/useInterface/
+/managerLayer/
+/implementsLayer/

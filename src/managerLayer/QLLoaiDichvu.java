@@ -34,15 +34,19 @@ public class QLLoaiDichvu implements QLLoaiDichvuimp {
 		return false;
 	}
 	
-
-	
 	@Override
 	public LoaiDichvu timLoaiDichvu(String maldv) {
 		return em.find(LoaiDichvu.class, maldv);
 	}
 	
-
-	
+	@Override
+	public LoaiDichvu timTheotenLDV(String tenDV) {
+		for (LoaiDichvu loaiDichvu : getDSLoaiDichvu()) {
+			if(loaiDichvu.getTenLDV().equalsIgnoreCase(tenDV))
+				return loaiDichvu;
+		}
+		return null;
+	}
 	@Override
 	public boolean xoaLoaiDichvu(String maldv) {
 		EntityTransaction tr = em.getTransaction();
@@ -73,7 +77,6 @@ public class QLLoaiDichvu implements QLLoaiDichvuimp {
 		}
 		return false;
 	}
-
 	
 	@Override
 	public List<LoaiDichvu> getDSLoaiDichvu() {

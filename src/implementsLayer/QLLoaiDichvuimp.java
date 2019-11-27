@@ -16,4 +16,6 @@ public interface QLLoaiDichvuimp {
 
 	List<LoaiDichvu> getDSLoaiDichvu();
 
+	LoaiDichvu timTheotenLDV(String tenDV);
+
 }
