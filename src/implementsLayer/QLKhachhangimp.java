@@ -21,5 +21,7 @@ public interface QLKhachhangimp {
 	KhachHang timTenKH(String tenKH);
 
 	KhachHang timSoDTKH(String soDT);
+
+	KhachHang timKHTheoDinhdang(String tenKHSoDT);
 	
 }

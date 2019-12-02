@@ -10,15 +10,12 @@ import implementsLayer.QLKhachhangimp;
 
 public class QLKhachhang implements QLKhachhangimp {
 	
-	// truy van databse tren mongo ke thua tu implement
 	private EntityManager em;
 	public QLKhachhang(EntityManager em) {
 		super();
 		this.em = em;
 	}
-	// them khachhang vao co so du lieu
-	// true khi ko trung
-	// fasle khi trung
+
 	@Override
 	public boolean themKhachHang(KhachHang kh) {
 		EntityTransaction tr=em.getTransaction();
@@ -39,7 +36,6 @@ public class QLKhachhang implements QLKhachhangimp {
 		return em.find(KhachHang.class, makh);
 	}
 	
-	
 	@Override
 	public boolean xoaKhachHang(String makh) {
 		EntityTransaction tr = em.getTransaction();
@@ -54,7 +50,6 @@ public class QLKhachhang implements QLKhachhangimp {
 		}
 		return false;
 	}
-	
 	
 	@Override
 	public boolean suaKhachHang(KhachHang kh) {
@@ -93,6 +88,16 @@ public class QLKhachhang implements QLKhachhangimp {
 	public KhachHang timSoDTKH(String soDT) {
 		for (KhachHang khachHang : getDSKhachHang()) {
 			if(khachHang.getSoDT().equals(soDT))
+				return khachHang;
+		}
+		return null;
+	}
+	
+	@Override
+	public KhachHang timKHTheoDinhdang(String tenKHSoDT) {
+		for (KhachHang khachHang : getDSKhachHang()) {
+			String s = khachHang.getTenKH() + "  [" + khachHang.getSoDT() + "]";
+			if(s.equalsIgnoreCase(tenKHSoDT))
 				return khachHang;
 		}
 		return null;

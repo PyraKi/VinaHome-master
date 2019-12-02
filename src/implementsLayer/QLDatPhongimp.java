@@ -16,4 +16,6 @@ public interface QLDatPhongimp {
 
 	List<DatPhong> getDSDatPhong();
 
+	boolean kiemTraTrung(DatPhong o);
+
 }

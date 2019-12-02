@@ -3,6 +3,7 @@ package entity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedNativeQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -21,9 +23,8 @@ public class DatPhong {
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="maKH")
 	private KhachHang khachHang;
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="maPhong")
-	private Phong phong;
+	@OneToMany(fetch=FetchType.LAZY)
+	private List<Phong> phongs;
 	private String loaiDatPhong;
 	private LocalDate ngayDatPhong;
 	private LocalTime gioDatPhong;
@@ -42,11 +43,11 @@ public class DatPhong {
 	public void setKhachHang(KhachHang khachHang) {
 		this.khachHang = khachHang;
 	}
-	public Phong getPhong() {
-		return phong;
+	public List<Phong> getPhong() {
+		return phongs;
 	}
-	public void setPhong(Phong phong) {
-		this.phong = phong;
+	public void setPhong(List<Phong> phongs) {
+		this.phongs = phongs;
 	}
 	public String getLoaiDatPhong() {
 		return loaiDatPhong;
@@ -84,12 +85,35 @@ public class DatPhong {
 	public void setNhanPhong(LocalDateTime nhanPhong) {
 		this.nhanPhong = nhanPhong;
 	}
-	public DatPhong(String maDP, KhachHang khachHang, Phong phong, String loaiDatPhong, LocalDate ngayDatPhong,
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((maDP == null) ? 0 : maDP.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DatPhong other = (DatPhong) obj;
+		if (maDP == null) {
+			if (other.maDP != null)
+				return false;
+		} else if (!maDP.equals(other.maDP))
+			return false;
+		return true;
+	}
+	public DatPhong(String maDP, KhachHang khachHang, List<Phong> phongs, String loaiDatPhong, LocalDate ngayDatPhong,
 			LocalTime gioDatPhong, LocalDate ngayTraPhong, LocalTime gioTraPhong, LocalDateTime nhanPhong) {
 		super();
 		this.maDP = maDP;
 		this.khachHang = khachHang;
-		this.phong = phong;
+		this.phongs = phongs;
 		this.loaiDatPhong = loaiDatPhong;
 		this.ngayDatPhong = ngayDatPhong;
 		this.gioDatPhong = gioDatPhong;
@@ -107,6 +131,8 @@ public class DatPhong {
 		builder.append(maDP);
 		builder.append(", khachHang=");
 		builder.append(khachHang);
+		builder.append(", phongs=");
+		builder.append(phongs);
 		builder.append(", loaiDatPhong=");
 		builder.append(loaiDatPhong);
 		builder.append(", ngayDatPhong=");

@@ -10,15 +10,12 @@ import implementsLayer.QLDatPhongimp;
 
 public class QLDatPhong implements QLDatPhongimp {
 	
-	// truy van databse tren mongo ke thua tu implement
 	private EntityManager em;
 	public QLDatPhong(EntityManager em) {
 		super();
 		this.em = em;
 	}
-	// them datphong vao co so du lieu
-	// true khi ko trung
-	// fasle khi trung
+	
 	@Override
 	public boolean themDatPhong(DatPhong dp) {
 		EntityTransaction tr=em.getTransaction();
@@ -33,15 +30,11 @@ public class QLDatPhong implements QLDatPhongimp {
 		}
 		return false;
 	}
-
 	
 	@Override
 	public DatPhong timDatPhong(String maPD) {
 		return em.find(DatPhong.class, maPD);
 	}
-	
-
-	
 	
 	@Override
 	public boolean xoaDatPhong(String maPD) {
@@ -58,8 +51,6 @@ public class QLDatPhong implements QLDatPhongimp {
 		return false;
 	}
 	
-	
-	
 	@Override
 	public boolean suaDatPhong(DatPhong dp) {
 		EntityTransaction tr = em.getTransaction();
@@ -74,11 +65,22 @@ public class QLDatPhong implements QLDatPhongimp {
 		}
 		return false;
 	}
-
-	
 	
 	@Override
 	public List<DatPhong> getDSDatPhong() {
 		return em.createQuery("from DatPhong dp",DatPhong.class).getResultList();
+	}
+	
+	@Override
+	public boolean kiemTraTrung(DatPhong o) {
+		for (DatPhong datPhong : getDSDatPhong()) {
+			if((datPhong.getNgayDatPhong().compareTo(o.getNgayDatPhong()) >=0 &&
+					datPhong.getNgayTraPhong().compareTo(o.getNgayDatPhong()) <=0) ||
+					(datPhong.getNgayDatPhong().compareTo(o.getNgayTraPhong()) >=0 &&
+					datPhong.getNgayTraPhong().compareTo(o.getNgayTraPhong()) <=0)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
