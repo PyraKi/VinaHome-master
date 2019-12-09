@@ -1,4 +1,2 @@
-[{"_id":"GDL","loaiGiuong":"Hai giường đôi lớn"},
-{"_id":"GDN","loaiGiuong":"Hai giường đôi nhỏ"},
-{"_id":"GSL","loaiGiuong":"Một giường đơn lớn"},
-{"_id":"GSN","loaiGiuong":"Một giường đơn nhỏ"}]
+[{"_id":"MG","loaiGiuong":"Một giường"},
+{"_id":"HG","loaiGiuong":"Hai giường"}]

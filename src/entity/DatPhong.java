@@ -17,7 +17,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name="DatPhong")
 @NamedNativeQuery(name="getDatPhong",query="db.DatPhong.find({})",resultClass=DatPhong.class)
-public class DatPhong {
+public class DatPhong implements Comparable<DatPhong>{
 	@Id
 	private String maDP;
 	@ManyToOne(fetch=FetchType.LAZY)
@@ -149,5 +149,10 @@ public class DatPhong {
 		builder.append(nhanPhong);
 		builder.append("]");
 		return builder.toString();
+	}
+	@Override
+	public int compareTo(DatPhong o) {
+		int c = this.getNgayDatPhong().compareTo(o.getNgayDatPhong());
+		return c;
 	}
 }

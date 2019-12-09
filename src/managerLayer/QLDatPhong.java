@@ -1,11 +1,13 @@
 package managerLayer;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
 import entity.DatPhong;
+import entity.Phong;
 import implementsLayer.QLDatPhongimp;
 
 public class QLDatPhong implements QLDatPhongimp {
@@ -68,17 +70,25 @@ public class QLDatPhong implements QLDatPhongimp {
 	
 	@Override
 	public List<DatPhong> getDSDatPhong() {
-		return em.createQuery("from DatPhong dp",DatPhong.class).getResultList();
+		List<DatPhong> datPhongs = em.createQuery("from DatPhong dp",DatPhong.class).getResultList();
+		Collections.sort(datPhongs);
+		return datPhongs;
 	}
 	
 	@Override
 	public boolean kiemTraTrung(DatPhong o) {
 		for (DatPhong datPhong : getDSDatPhong()) {
-			if((datPhong.getNgayDatPhong().compareTo(o.getNgayDatPhong()) >=0 &&
-					datPhong.getNgayTraPhong().compareTo(o.getNgayDatPhong()) <=0) ||
-					(datPhong.getNgayDatPhong().compareTo(o.getNgayTraPhong()) >=0 &&
-					datPhong.getNgayTraPhong().compareTo(o.getNgayTraPhong()) <=0)) {
-				return true;
+			for(Phong pd : datPhong.getPhong()) {
+				for(Phong p : o.getPhong()) {
+					if(pd.getMaPhong().equals(p.getMaPhong())) {
+						if((datPhong.getNgayDatPhong().compareTo(o.getNgayDatPhong()) >=0 &&
+								datPhong.getNgayTraPhong().compareTo(o.getNgayDatPhong()) <=0) ||
+								(datPhong.getNgayDatPhong().compareTo(o.getNgayTraPhong()) >=0 &&
+								datPhong.getNgayTraPhong().compareTo(o.getNgayTraPhong()) <=0)) {
+							return true;
+						}
+					}
+				}
 			}
 		}
 		return false;

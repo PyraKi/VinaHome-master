@@ -10,16 +10,12 @@ import implementsLayer.QLDiachiimp;
 
 public class QLDiachi implements QLDiachiimp{
 	
-	// truy van databse tren mongo ke thua tu implement
 	private EntityManager em;
 	public QLDiachi(EntityManager em) {
 		super();
 		this.em = em;
 	}
 	
-	// them diachi vao co so du lieu
-	// true khi ko trung
-	// fasle khi trung
 	@Override
 	public boolean themDiachi(DiaChi dc) {
 		EntityTransaction tr=em.getTransaction();

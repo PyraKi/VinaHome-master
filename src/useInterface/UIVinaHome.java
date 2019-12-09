@@ -28,9 +28,11 @@ import entity.ChitietPhieuDichvu;
 import entity.DatPhong;
 import entity.DiaChi;
 import entity.Dichvu;
+import entity.Giuong;
 import entity.Hoadon;
 import entity.KhachHang;
 import entity.LoaiDichvu;
+import entity.LoaiPhong;
 import entity.NhanVien;
 import entity.PhieuDichvu;
 import entity.Phong;
@@ -40,9 +42,11 @@ import implementsLayer.QLChitietHoadonimp;
 import implementsLayer.QLDatPhongimp;
 import implementsLayer.QLDiachiimp;
 import implementsLayer.QLDichvuimp;
+import implementsLayer.QLGiuongimp;
 import implementsLayer.QLHoadonimp;
 import implementsLayer.QLKhachhangimp;
 import implementsLayer.QLLoaiDichvuimp;
+import implementsLayer.QLLoaiphongimp;
 import implementsLayer.QLNhanvienimp;
 import implementsLayer.QLPhieuDichvuimp;
 import implementsLayer.QLPhongimp;
@@ -52,9 +56,11 @@ import managerLayer.QLChitietHoadon;
 import managerLayer.QLDatPhong;
 import managerLayer.QLDiachi;
 import managerLayer.QLDichvu;
+import managerLayer.QLGiuong;
 import managerLayer.QLHoadon;
 import managerLayer.QLKhachhang;
 import managerLayer.QLLoaiDichvu;
+import managerLayer.QLLoaiphong;
 import managerLayer.QLNhanVien;
 import managerLayer.QLPhieuDichvu;
 import managerLayer.QLPhong;
@@ -86,8 +92,11 @@ import javax.swing.DefaultListModel;
 
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.NumberFormat;
@@ -179,6 +188,8 @@ public class UIVinaHome extends JFrame {
 	private QLChitietHoadonimp chitietHoadonDAO;
 	private QLLoaiDichvuimp loaiDichvuDAO;
 	private QLDatPhongimp datPhongDAO;
+	private QLLoaiphongimp loaiphongDAO;
+	private QLGiuongimp giuongDAO;
 	private NhanVien nhanVien = new NhanVien();
 	private PhieuDichvu phieuDichvu;
 
@@ -197,6 +208,8 @@ public class UIVinaHome extends JFrame {
 		chitietHoadonDAO = new QLChitietHoadon(em);
 		loaiDichvuDAO = new QLLoaiDichvu(em);
 		datPhongDAO = new QLDatPhong(em);
+		loaiphongDAO = new QLLoaiphong(em);
+		giuongDAO = new QLGiuong(em);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
@@ -890,6 +903,25 @@ public class UIVinaHome extends JFrame {
 		updateTableKhachHang();
 		updateTableNhanvien();
 		updateTableDatPhong();
+		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+			
+			@Override
+			public boolean dispatchKeyEvent(KeyEvent e) {
+				switch (e.getID()) {
+				  case KeyEvent.KEY_PRESSED:
+                        if (e.getKeyCode() == KeyEvent.VK_F5) {
+                        	tim.requestFocus();
+                        	xuatDSPhong();
+                    		displayDSdichvu();
+                    		updateTableKhachHang();
+                    		updateTableNhanvien();
+                    		updateTableDatPhong();
+                        }
+                        break;
+				}
+				return false;
+			}
+		});
 	}
 	
 	//Hiện thị, cập nhật danh sách phòng
@@ -938,7 +970,7 @@ public class UIVinaHome extends JFrame {
 				if(phong.getLoaiPhong().getMaLP().equals("PD"))
 					resource += "phongdon.jpg";
 				else if(phong.getLoaiPhong().getMaLP().equals("PDD"))
-					resource += phong.getGiuong().getMaGiuong().equals("GDN") ? "phongdoi.jpg" : "phongdoi2.PNG";
+					resource += phong.getGiuong().getMaGiuong().equals("MG") ? "phongdoi.jpg" : "phongdoi2.PNG";
 				else resource += "phongGD.jpg";
 				Image img = ImageIO.read(getClass().getResource(resource));
 				phongs[index].setIcon(new ImageIcon(img));
@@ -963,20 +995,24 @@ public class UIVinaHome extends JFrame {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						DatPhong datPhong = new DatPhong();
-						List<Phong> phongs = datPhong.getPhong();
+						List<Phong> phongs = new ArrayList<Phong>();
 						phongs.add(phong);
 						datPhong.setPhong(phongs);
 						new UIDatPhong(datPhong, "add").setVisible(true);
 					}
 				});
-				JMenuItem thuePhong = new JMenuItem("Thuê phòng");
-				thuePhong.setFont(new Font("Times New Roman", Font.PLAIN, 22));
-				thuePhong.setIcon(new ImageIcon(UIVinaHome.class.getResource("/images/rent.png")));
-				menuPhong.add(thuePhong);
-				JMenuItem doiPhong = new JMenuItem("đổi phòng");
+				JMenuItem doiPhong = new JMenuItem("Đổi phòng");
 				doiPhong.setFont(new Font("Times New Roman", Font.PLAIN, 22));
 				doiPhong.setIcon(new ImageIcon(UIVinaHome.class.getResource("/images/swap.png")));
 				menuPhong.add(doiPhong);
+				if(!phong.getTinhtrangPhong().equalsIgnoreCase("Đang thuê"))
+					doiPhong.setEnabled(false);
+				doiPhong.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						new UIDoiPhong(phong).setVisible(true);						
+					}
+				});
 				JMenuItem traPhong = new JMenuItem("Trả phòng");
 				traPhong.setFont(new Font("Times New Roman", Font.PLAIN, 22));
 				traPhong.setIcon(new ImageIcon(UIVinaHome.class.getResource("/images/checkout.png")));
@@ -986,13 +1022,37 @@ public class UIVinaHome extends JFrame {
 					mnQLPhong.setFont(new Font("Times New Roman", Font.PLAIN, 22));
 					JMenuItem itemSuaphong = new JMenuItem("Sửa phòng");
 					itemSuaphong.setFont(new Font("Times New Roman", Font.PLAIN, 22));
+					itemSuaphong.setIcon(new ImageIcon(UIVinaHome.class.getResource("/images/edit_room.png")));
 					mnQLPhong.add(itemSuaphong);
+					itemSuaphong.addActionListener(new ActionListener() {
+						
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							new UIQLPhong(phong, "edit").setVisible(true);             							
+						}
+					});
 					JMenuItem itemThemPhong = new JMenuItem("Thêm phòng");
 					itemThemPhong.setFont(new Font("Times New Roman", Font.PLAIN, 22));
+					itemThemPhong.setIcon(new ImageIcon(UIVinaHome.class.getResource("/images/add_room.png")));
 					mnQLPhong.add(itemThemPhong);
+					itemThemPhong.addActionListener(new ActionListener() {
+						
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							new UIQLPhong(null, "add").setVisible(true);             							
+						}
+					});
 					JMenuItem ItemXoaPhong = new JMenuItem("Xóa Phòng");
 					ItemXoaPhong.setFont(new Font("Times New Roman", Font.PLAIN, 22));
+					ItemXoaPhong.setIcon(new ImageIcon(UIVinaHome.class.getResource("/images/remove_room.png")));
 					mnQLPhong.add(ItemXoaPhong);
+					ItemXoaPhong.addActionListener(new ActionListener() {
+						
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							new UIQLPhong(phong, "remove").setVisible(true);             							
+						}
+					});
 				menuPhong.add(mnQLPhong);
 			}
 				
@@ -1012,6 +1072,445 @@ public class UIVinaHome extends JFrame {
 		updateSophongtrong();
 	}
 	
+	public class UIDoiPhong extends JDialog {
+		
+		private JCheckBox[] ckbPhong1;
+		private JCheckBox[] ckbPhong2;
+		private String[] loaithue = new String[] {"Theo giờ", "Qua đêm", "Theo ngày"};
+		private DefaultComboBoxModel<String> dfloaithue1 = new DefaultComboBoxModel<String>(loaithue);
+		private JComboBox<String> cb_loaiThue1 = new JComboBox<String>(dfloaithue1);
+		private DefaultComboBoxModel<String> dfloaithue2 = new DefaultComboBoxModel<String>(loaithue);
+		private JComboBox<String> cb_loaiThue2 = new JComboBox<String>(dfloaithue2);
+		private String[] gio = new String[] {"12:00 am", "12:00 pm"};
+		private DefaultComboBoxModel<String> dfgionhan1 = new DefaultComboBoxModel<String>(gio);
+		private DefaultComboBoxModel<String> dfgionhan2 = new DefaultComboBoxModel<String>(gio);
+		private JComboBox<String> cbGionhan1 = new JComboBox<String>(dfgionhan1);
+		private JComboBox<String> cbGionhan2 = new JComboBox<String>(dfgionhan2);
+		private JDateChooser dateChooser_nhan1 = new JDateChooser();
+		private JDateChooser dateChooser_nhan2 = new JDateChooser();
+		private JDateChooser ngaysinh1 = new JDateChooser();
+		private JDateChooser ngaysinh2 = new JDateChooser();
+		private String[] loaiKH = new String[] {"Vãn lai", "Thường", "VIP"};
+		private DefaultComboBoxModel<String> dfLoaiKH1 = new DefaultComboBoxModel<String>(loaiKH);
+		private JComboBox<String> cb_LoaiKH1 = new JComboBox<String>(dfLoaiKH1);
+		private DefaultComboBoxModel<String> dfLoaiKH2 = new DefaultComboBoxModel<String>(loaiKH);
+		private JComboBox<String> cb_LoaiKH2 = new JComboBox<String>(dfLoaiKH2);
+		private JLabel hoten1 = new JLabel();
+		private JLabel soDT1 = new JLabel();
+		private JLabel soCMND1 = new JLabel();
+		private JLabel diaChi1 = new JLabel();
+		private JLabel hoten2 = new JLabel();
+		private JLabel soDT2 = new JLabel();
+		private JLabel soCMND2 = new JLabel();
+		private JLabel diaChi2 = new JLabel();
+		
+		public UIDoiPhong(Phong phong) {
+			super(new JFrame(),"Đặt phòng",true);
+			getContentPane().setBackground(Color.WHITE);
+			setBounds(0, 0, 850, 665);
+			setLocationRelativeTo(null);
+			getContentPane().setLayout(null);
+			KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+
+				@Override
+				public boolean dispatchKeyEvent(KeyEvent e) {
+					switch (e.getID()) {
+					case KeyEvent.KEY_PRESSED:
+						if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+							dispose();
+						}
+						break;
+					}
+					return false;
+				}
+			});
+			
+			dateChooser_nhan1.setDateFormatString("dd/MM/yyyy");
+			dateChooser_nhan2.setDateFormatString("dd/MM/yyyy");
+			dateChooser_nhan1.getSpinner().setEnabled(false);
+			dateChooser_nhan2.getSpinner().setEnabled(false);
+			cb_loaiThue1.setEnabled(false);
+			cb_loaiThue2.setEnabled(false);
+			cbGionhan1.setEnabled(false);
+			cbGionhan2.setEnabled(false);
+			ngaysinh1.getSpinner().setEnabled(false);
+			ngaysinh2.getSpinner().setEnabled(false);
+			cb_LoaiKH1.setEnabled(false);
+			cb_LoaiKH2.setEnabled(false);
+			
+			JPanel panel_Phong1 = new JPanel();
+			panel_Phong1.setLayout(new BorderLayout(0, 0));
+			panel_Phong1.setBackground(Color.WHITE);
+			panel_Phong1.setBounds(0, 0, 390, 210);
+			Border border = BorderFactory.createLineBorder(Color.RED);
+			TitledBorder titleBorder = new TitledBorder(border, "Phòng");
+			titleBorder.setTitleFont(new Font("Times New Roman", Font.BOLD, 16));
+			titleBorder.setTitleColor(Color.RED);
+			panel_Phong1.setBorder(titleBorder);
+			
+			JPanel panel_Phongs = new JPanel();
+			panel_Phongs.setBackground(Color.WHITE);
+			panel_Phongs.setLayout(new GridLayout(0, 5, 5, 10));
+			ckbPhong1 = new JCheckBox[phongDAO.getDSPhong().size()];
+			int index = 0;
+			//TODO
+			for (Phong ps : phongDAO.getDSPhong()) {
+				ckbPhong1[index] = new JCheckBox(ps.getMaPhong());
+				ckbPhong1[index].setFont(new Font("Times New Roman", Font.PLAIN, 16));
+				ckbPhong1[index].setBackground(Color.WHITE);
+				if(ps.equals(phong))
+					ckbPhong1[index].setSelected(true);
+				if(!ps.getTinhtrangPhong().equalsIgnoreCase("Đang thuê"))
+					ckbPhong1[index].setEnabled(false);
+				final int temp = index;
+				ckbPhong1[index].addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						for (int i = 0; i < phongDAO.getDSPhong().size(); i++)
+							ckbPhong1[i].setSelected(false);
+						ckbPhong1[temp].setSelected(true);
+						updateInfo();
+					}
+				});
+				panel_Phongs.add(ckbPhong1[index++]);
+			}
+			JScrollPane scrollPaneDP = new JScrollPane(panel_Phongs,
+					ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+					ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+			scrollPaneDP.getViewport().setBackground(Color.WHITE);
+			panel_Phong1.add(scrollPaneDP);
+			getContentPane().add(panel_Phong1);
+			
+			JPanel panel_ThongTinDP = new JPanel();
+			panel_ThongTinDP.setBackground(Color.WHITE);
+			panel_ThongTinDP.setBounds(0, 215, 390, 155);
+			border = BorderFactory.createLineBorder(Color.RED);
+			titleBorder = new TitledBorder(border, "Thông tin đặt phòng");
+			titleBorder.setTitleFont(new Font("Times New Roman", Font.BOLD, 16));
+			titleBorder.setTitleColor(Color.RED);
+			panel_ThongTinDP.setBorder(titleBorder);
+			getContentPane().add(panel_ThongTinDP);
+			panel_ThongTinDP.setLayout(null);
+			
+			JLabel label = new JLabel("Hình thức thuê:");
+			label.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+			label.setBounds(10, 25, 134, 21);
+			panel_ThongTinDP.add(label);
+			
+			cb_loaiThue1.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+			cb_loaiThue1.setBounds(154, 24, 110, 22);
+			panel_ThongTinDP.add(cb_loaiThue1);
+			
+			label = new JLabel("Ngày nhận:");
+			label.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+			label.setBounds(10, 75, 100, 21);
+			panel_ThongTinDP.add(label);
+			
+			dateChooser_nhan1.getSpinner().setFont(new Font("Times New Roman", Font.PLAIN, 20));
+			dateChooser_nhan1.setBounds(126, 75, 228, 20);
+			panel_ThongTinDP.add(dateChooser_nhan1);
+			
+			label = new JLabel("Giờ nhận:");
+			label.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+			label.setBounds(10, 125, 90, 21);
+			panel_ThongTinDP.add(label);
+			
+			cbGionhan1.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+			cbGionhan1.setBounds(126, 125, 110, 20);
+			panel_ThongTinDP.add(cbGionhan1);
+			
+
+			JPanel panel_thongtinKH = new JPanel();
+			panel_thongtinKH.setBackground(Color.WHITE);
+			panel_thongtinKH.setBounds(0, 371, 390, 264);
+			border = BorderFactory.createLineBorder(Color.RED);
+			titleBorder = new TitledBorder(border, "Khách hàng");
+			titleBorder.setTitleFont(new Font("Times New Roman", Font.BOLD, 16));
+			titleBorder.setTitleColor(Color.RED);
+			panel_thongtinKH.setBorder(titleBorder);
+			getContentPane().add(panel_thongtinKH);
+			panel_thongtinKH.setLayout(null);
+			
+			label = new JLabel("Họ tên:");
+			label.setFont(new Font("Times New Roman", Font.BOLD, 18));
+			label.setBounds(10, 25, 58, 21);
+			panel_thongtinKH.add(label);
+
+			label = new JLabel("Số ĐT:");
+			label.setFont(new Font("Times New Roman", Font.BOLD,18));
+			label.setBounds(10, 65, 58, 21);
+			panel_thongtinKH.add(label);
+
+			label = new JLabel("Số CMND:");
+			label.setFont(new Font("Times New Roman", Font.BOLD,18));
+			label.setBounds(10, 105, 86, 21);
+			panel_thongtinKH.add(label);
+
+			label = new JLabel("Ngày sinh:");
+			label.setFont(new Font("Times New Roman", Font.BOLD, 18));
+			label.setBounds(10, 145, 83, 21);
+			panel_thongtinKH.add(label);
+			titleBorder = new TitledBorder(border, "Địa chỉ");
+			titleBorder.setTitleFont(new Font("Times New Roman", Font.ITALIC, 16));
+			titleBorder.setTitleColor(Color.RED);
+
+			label = new JLabel("Loại KH:");
+			label.setFont(new Font("Times New Roman", Font.BOLD, 18));
+			label.setBounds(10, 185, 74, 21);
+			panel_thongtinKH.add(label);
+			
+			ngaysinh1.getSpinner().setFont(new Font("Times New Roman", Font.BOLD, 18));
+			ngaysinh1.setDateFormatString("dd/MM/yyyy");
+			ngaysinh1.setBounds(106, 140, 205, 25);
+			panel_thongtinKH.add(ngaysinh1);
+
+			cb_LoaiKH1.setFont(new Font("Times New Roman", Font.BOLD, 18));
+			cb_LoaiKH1.setBounds(106, 180, 95, 27);
+			panel_thongtinKH.add(cb_LoaiKH1);
+			
+			label = new JLabel("Địa chỉ");
+			label.setFont(new Font("Times New Roman", Font.BOLD, 18));
+			label.setBounds(10, 225, 74, 21);
+			panel_thongtinKH.add(label);
+			
+			hoten1.setFont(new Font("Times New Roman", Font.BOLD, 18));
+			hoten1.setBounds(106, 25, 222, 21);
+			panel_thongtinKH.add(hoten1);
+			
+			soDT1.setFont(new Font("Times New Roman", Font.BOLD, 18));
+			soDT1.setBounds(106, 65, 222, 21);
+			panel_thongtinKH.add(soDT1);
+			
+			soCMND1.setFont(new Font("Times New Roman", Font.BOLD, 18));
+			soCMND1.setBounds(106, 105, 222, 21);
+			panel_thongtinKH.add(soCMND1);
+			
+			diaChi1.setFont(new Font("Times New Roman", Font.BOLD, 18));
+			diaChi1.setBounds(106, 225, 222, 21);
+			panel_thongtinKH.add(diaChi1);
+			
+			JPanel panel_Phong2 = new JPanel();
+			panel_Phong2.setBackground(Color.WHITE);
+			panel_Phong2.setBounds(450, 0, 390, 210);
+			getContentPane().add(panel_Phong2);
+			panel_Phong2.setLayout(new BorderLayout(0, 0));
+			border = BorderFactory.createLineBorder(Color.RED);
+			titleBorder = new TitledBorder(border, "Phòng");
+			titleBorder.setTitleFont(new Font("Times New Roman", Font.BOLD, 16));
+			titleBorder.setTitleColor(Color.RED);
+			panel_Phong2.setBorder(titleBorder);
+			
+			JPanel panel_Phongs2 = new JPanel();
+			panel_Phongs2.setBackground(Color.WHITE);
+			panel_Phongs2.setLayout(new GridLayout(0, 5, 5, 10));
+			ckbPhong2 = new JCheckBox[phongDAO.getDSPhong().size()];
+			index = 0;
+			for(Phong ps : phongDAO.getDSPhong()) {
+				ckbPhong2[index] = new JCheckBox(ps.getMaPhong());
+				ckbPhong2[index].setFont(new Font("Times New Roman", Font.PLAIN, 16));
+				ckbPhong2[index].setBackground(Color.WHITE);
+				if(ps.equals(phong))
+					ckbPhong2[index].setEnabled(false);
+				if(!ps.getTinhtrangPhong().equalsIgnoreCase("Đang thuê"))
+					ckbPhong2[index].setEnabled(false);
+				final int temp = index;
+				ckbPhong2[index].addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						for (int i = 0; i < phongDAO.getDSPhong().size(); i++)
+							ckbPhong2[i].setSelected(false);
+						ckbPhong2[temp].setSelected(true);
+						updateInfo();
+					}
+				});
+				panel_Phongs2.add(ckbPhong2[index++]);
+			}
+			JScrollPane scrollPaneDP2 = new JScrollPane(panel_Phongs2,
+					ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+					ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+			scrollPaneDP2.getViewport().setBackground(Color.WHITE);
+			panel_Phong2.add(scrollPaneDP2);
+			getContentPane().add(panel_Phong2);
+			
+			JButton btbswap = new JButton();
+			btbswap.setIcon(new ImageIcon(UIDoiPhong.class.getResource("/images/swap_06.png")));
+			btbswap.setBounds(397, 300, 45, 45);
+			getContentPane().add(btbswap);
+			
+			JPanel panel_ThongTinDP2 = new JPanel();
+			panel_ThongTinDP2.setBackground(Color.WHITE);
+			panel_ThongTinDP2.setBounds(450, 215, 390, 155);
+			border = BorderFactory.createLineBorder(Color.RED);
+			titleBorder = new TitledBorder(border, "Thông tin đặt phòng");
+			titleBorder.setTitleFont(new Font("Times New Roman", Font.BOLD, 16));
+			titleBorder.setTitleColor(Color.RED);
+			panel_ThongTinDP2.setBorder(titleBorder);
+			getContentPane().add(panel_ThongTinDP2);
+			panel_ThongTinDP2.setLayout(null);
+			
+			label = new JLabel("Hình thức thuê:");
+			label.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+			label.setBounds(10, 25, 134, 21);
+			panel_ThongTinDP2.add(label);
+			
+			cb_loaiThue2.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+			cb_loaiThue2.setBounds(154, 24, 110, 22);
+			panel_ThongTinDP2.add(cb_loaiThue2);
+			
+			label = new JLabel("Ngày nhận:");
+			label.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+			label.setBounds(10, 75, 100, 21);
+			panel_ThongTinDP2.add(label);
+			
+			dateChooser_nhan2.getSpinner().setFont(new Font("Times New Roman", Font.PLAIN, 20));
+			dateChooser_nhan2.setBounds(126, 75, 228, 20);
+			panel_ThongTinDP2.add(dateChooser_nhan2);
+			
+			label = new JLabel("Giờ nhận:");
+			label.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+			label.setBounds(10, 125, 90, 21);
+			panel_ThongTinDP2.add(label);
+			
+			cbGionhan2.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+			cbGionhan2.setBounds(126, 125, 110, 20);
+			panel_ThongTinDP2.add(cbGionhan2);
+			
+			JPanel panel_thongtinKH2 = new JPanel();
+			panel_thongtinKH2.setBackground(Color.WHITE);
+			panel_thongtinKH2.setBounds(450, 371, 390, 264);
+			border = BorderFactory.createLineBorder(Color.RED);
+			titleBorder = new TitledBorder(border, "Khách hàng");
+			titleBorder.setTitleFont(new Font("Times New Roman", Font.BOLD, 16));
+			titleBorder.setTitleColor(Color.RED);
+			panel_thongtinKH2.setBorder(titleBorder);
+			getContentPane().add(panel_thongtinKH2);
+			panel_thongtinKH2.setLayout(null);
+			
+			label = new JLabel("Họ tên:");
+			label.setFont(new Font("Times New Roman", Font.BOLD, 18));
+			label.setBounds(10, 25, 58, 21);
+			panel_thongtinKH2.add(label);
+
+			label = new JLabel("Số ĐT:");
+			label.setFont(new Font("Times New Roman", Font.BOLD,18));
+			label.setBounds(10, 65, 58, 21);
+			panel_thongtinKH2.add(label);
+
+			label = new JLabel("Số CMND:");
+			label.setFont(new Font("Times New Roman", Font.BOLD,18));
+			label.setBounds(10, 105, 86, 21);
+			panel_thongtinKH2.add(label);
+
+			label = new JLabel("Ngày sinh:");
+			label.setFont(new Font("Times New Roman", Font.BOLD, 18));
+			label.setBounds(10, 145, 83, 21);
+			panel_thongtinKH2.add(label);
+			
+			titleBorder = new TitledBorder(border, "Địa chỉ");
+			titleBorder.setTitleFont(new Font("Times New Roman", Font.ITALIC, 16));
+			titleBorder.setTitleColor(Color.RED);
+
+			label = new JLabel("Loại KH:");
+			label.setFont(new Font("Times New Roman", Font.BOLD, 18));
+			label.setBounds(10, 185, 74, 21);
+			panel_thongtinKH2.add(label);
+			
+			ngaysinh2.setBounds(106, 140, 205, 25);
+			ngaysinh2.getSpinner().setFont(new Font("Times New Roman", Font.BOLD, 18));
+			ngaysinh2.setDateFormatString("dd/MM/yyyy");
+			panel_thongtinKH2.add(ngaysinh2);
+
+			cb_LoaiKH2.setFont(new Font("Times New Roman", Font.BOLD, 18));
+			cb_LoaiKH2.setBounds(106, 180, 95, 27);
+			panel_thongtinKH2.add(cb_LoaiKH2);
+			
+			label = new JLabel("Địa chỉ");
+			label.setFont(new Font("Times New Roman", Font.BOLD, 18));
+			label.setBounds(10, 225, 74, 21);
+			panel_thongtinKH2.add(label);
+			
+			hoten2.setFont(new Font("Times New Roman", Font.BOLD, 18));
+			hoten2.setBounds(106, 25, 222, 21);
+			panel_thongtinKH2.add(hoten2);
+			
+			soDT2.setFont(new Font("Times New Roman", Font.BOLD, 18));
+			soDT2.setBounds(106, 65, 222, 21);
+			panel_thongtinKH2.add(soDT2);
+			
+			soCMND2.setFont(new Font("Times New Roman", Font.BOLD, 18));
+			soCMND2.setBounds(106, 105, 222, 21);
+			panel_thongtinKH2.add(soCMND2);
+			
+			diaChi2.setFont(new Font("Times New Roman", Font.BOLD, 18));
+			diaChi2.setBounds(106, 225, 222, 21);
+			panel_thongtinKH2.add(diaChi2);
+			
+			updateInfo();
+		}
+		public void updateInfo() {
+			 DatPhong datPhongA = null;
+			 DatPhong datPhongB = null;
+			 Phong phongA = null;
+			 Phong phongB = null;
+			 List<Phong> phongs = phongDAO.getDSPhong();
+			 for(int i = 0; i < phongs.size(); i++) {
+				 if(ckbPhong1[i].isSelected())
+					 phongA = phongs.get(i);
+				 if(ckbPhong2[i].isSelected())
+					 phongB = phongs.get(i);
+				 
+			 }
+			for (DatPhong datPhong : datPhongDAO.getDSDatPhong()) {
+				if(datPhong.getPhong().contains(phongA))
+					datPhongA = datPhong;
+				if(datPhong.getPhong().contains(phongB))
+					datPhongB = datPhong;
+			}
+			if(datPhongA != null) {
+				hoten1.setText(datPhongA.getKhachHang().getTenKH());
+				soDT1.setText(datPhongA.getKhachHang().getSoDT());
+				soCMND1.setText(datPhongA.getKhachHang().getSoCMD());
+				diaChi1.setText((datPhongA.getKhachHang().getDiaChi().getTinh().equals("TP HCM") || 
+						datPhongA.getKhachHang().getDiaChi().getTinh().equals("Hà Nội")) ?
+						String.format("%s %s, P.%s, Q.%s, %s", 
+								datPhongA.getKhachHang().getDiaChi().getSoNha(),
+								datPhongA.getKhachHang().getDiaChi().getDuong(),
+								datPhongA.getKhachHang().getDiaChi().getPhuong(), 
+								datPhongA.getKhachHang().getDiaChi().getQuan(),
+								datPhongA.getKhachHang().getDiaChi().getTinh()) :
+						String.format("%s %s, P.%s, TP.%s, T.%s", 
+								datPhongA.getKhachHang().getDiaChi().getSoNha(), 
+								datPhongA.getKhachHang().getDiaChi().getDuong(),
+								datPhongA.getKhachHang().getDiaChi().getPhuong(), 
+								datPhongA.getKhachHang().getDiaChi().getQuan(), 
+								datPhongA.getKhachHang().getDiaChi().getTinh()));
+				ngaysinh1.setDate(java.sql.Date.valueOf(datPhongA.getKhachHang().getNgaySinh()));
+				cb_LoaiKH1.setSelectedItem(datPhongA.getKhachHang().getLoaiKH());
+			}
+			if(datPhongB != null) {
+				hoten2.setText(datPhongB.getKhachHang().getTenKH());
+				soDT2.setText(datPhongB.getKhachHang().getSoDT());
+				soCMND2.setText(datPhongB.getKhachHang().getSoCMD());
+				diaChi2.setText((datPhongB.getKhachHang().getDiaChi().getTinh().equals("TP HCM") || 
+						datPhongB.getKhachHang().getDiaChi().getTinh().equals("Hà Nội")) ?
+						String.format("%s %s, P.%s, Q.%s, %s", 
+								datPhongB.getKhachHang().getDiaChi().getSoNha(),
+								datPhongB.getKhachHang().getDiaChi().getDuong(),
+								datPhongB.getKhachHang().getDiaChi().getPhuong(), 
+								datPhongB.getKhachHang().getDiaChi().getQuan(),
+								datPhongB.getKhachHang().getDiaChi().getTinh()) :
+						String.format("%s %s, P.%s, TP.%s, T.%s", 
+								datPhongB.getKhachHang().getDiaChi().getSoNha(), 
+								datPhongB.getKhachHang().getDiaChi().getDuong(),
+								datPhongB.getKhachHang().getDiaChi().getPhuong(), 
+								datPhongB.getKhachHang().getDiaChi().getQuan(), 
+								datPhongB.getKhachHang().getDiaChi().getTinh()));
+				ngaysinh2.setDate(java.sql.Date.valueOf(datPhongB.getKhachHang().getNgaySinh()));
+				cb_LoaiKH2.setSelectedItem(datPhongB.getKhachHang().getLoaiKH());
+			}
+		}
+	}
+	
 	public void updateSophongtrong() {
 		List<Phong> dsphongs = phongDAO.getDSPhong();
 		int soPhongTrong = 0, ra;
@@ -1019,6 +1518,348 @@ public class UIVinaHome extends JFrame {
 			ra = (phong.getTinhtrangPhong().equalsIgnoreCase("Phòng trống")) ? 0 : 1;
 			soPhongTrong += (ra == 0) ? 1 : 0;
 			label_soPhong.setText(Integer.toString(soPhongTrong));
+		}
+	}
+	
+	public class UIQLPhong extends JDialog {
+		private JLabel lblHinh = new JLabel();
+		private JLabel lblsoPhong = new JLabel();
+		private JLabel lblMaPhong = new JLabel();
+		private JTextField tfTheogio = new JTextField();
+		private JTextField tfQuadem = new JTextField();
+		private JTextField tfTheoNgay = new JTextField();
+		private JSpinner soNguoi = new JSpinner();
+		private String[] loaiPhong;
+		private DefaultComboBoxModel<String> dfloaiphong;
+		private JComboBox<String> cb_LoaiPhong;
+		private String[] loaiGiuong;
+		private DefaultComboBoxModel<String> dfloaigiuong;
+		private JComboBox<String> cb_LoaiGiuong = new JComboBox<String>();
+		private String maPhong = "";
+		private Phong phong;
+		
+		public UIQLPhong(Phong phong, String action) {
+			super(new JFrame(), "Quản lý phòng", true);
+			getContentPane().setBackground(Color.WHITE);
+			setBackground(Color.WHITE);
+			setBounds(0, 0, 340, 615);
+			setLocationRelativeTo(null);
+			getContentPane().setLayout(null);
+			KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+				
+				@Override
+				public boolean dispatchKeyEvent(KeyEvent e) {
+					switch (e.getID()) {
+					  case KeyEvent.KEY_PRESSED:
+	                        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+	                            dispose();
+	                        }
+	                        break;
+					}
+					return false;
+				}
+			});
+			this.phong = phong;
+			
+			int sizePhong = phongDAO.getDSPhong().size();
+			maPhong = String.format("P%d0%d", (sizePhong/5 + 1), sizePhong%6);
+			
+			int index = 0;
+			loaiPhong = new String[loaiphongDAO.getDSLoaiPhong().size()];
+			for(LoaiPhong lp : loaiphongDAO.getDSLoaiPhong()) {
+				loaiPhong[index++] = lp.getTenLoaiphong();
+			}
+			dfloaiphong = new DefaultComboBoxModel<String>(loaiPhong);
+			cb_LoaiPhong = new JComboBox<String>(dfloaiphong);
+			
+			index = 0;
+			loaiGiuong = new String[giuongDAO.getDSGiuong().size()];
+			for(Giuong giuong : giuongDAO.getDSGiuong()) {
+				loaiGiuong[index++] = giuong.getLoaiGiuong();
+			}
+			dfloaigiuong = new DefaultComboBoxModel<String>(loaiGiuong);
+			cb_LoaiGiuong = new JComboBox<String>(dfloaigiuong);
+			
+			lblHinh.setHorizontalAlignment(SwingConstants.CENTER);
+			lblHinh.setBounds(0, 0, 330, 245);
+			getContentPane().add(lblHinh);
+			
+			JPanel panel_InfoPhong = new JPanel();
+			panel_InfoPhong.setBackground(Color.WHITE);
+			panel_InfoPhong.setBounds(0, 256, 330, 300);
+			getContentPane().add(panel_InfoPhong);
+			Border border = BorderFactory.createLineBorder(Color.RED);
+			TitledBorder titleBorder = new TitledBorder(border, "Thông tin phòng");
+			titleBorder.setTitleFont(new Font("Times New Roman", Font.BOLD, 18));
+			titleBorder.setTitleColor(Color.RED);
+			panel_InfoPhong.setBorder(titleBorder);
+			panel_InfoPhong.setLayout(null);
+			
+			JLabel lblNewLabel = new JLabel("Mã Phòng:");
+			lblNewLabel.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+			lblNewLabel.setBounds(10, 25, 80, 21);
+			panel_InfoPhong.add(lblNewLabel);
+			
+			lblMaPhong.setText(maPhong);
+			lblMaPhong.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+			lblMaPhong.setBounds(100, 25, 80, 21);
+			panel_InfoPhong.add(lblMaPhong);
+			
+			JLabel lblMPhng = new JLabel("Số phòng:");
+			lblMPhng.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+			lblMPhng.setBounds(197, 25, 80, 21);
+			panel_InfoPhong.add(lblMPhng);
+			
+			lblsoPhong.setText(maPhong.substring(1, maPhong.length()));
+			lblsoPhong.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+			lblsoPhong.setBounds(287, 25, 33, 21);
+			panel_InfoPhong.add(lblsoPhong);
+			
+			JLabel lblLoiPhng = new JLabel("Loại phòng:");
+			lblLoiPhng.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+			lblLoiPhng.setBounds(10, 65, 95, 21);
+			panel_InfoPhong.add(lblLoiPhng);
+			
+			cb_LoaiPhong.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+			cb_LoaiPhong.setBounds(144, 65, 162, 22);
+			panel_InfoPhong.add(cb_LoaiPhong);
+			cb_LoaiPhong.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					updateHinhphong();
+				}
+			});
+			
+			JLabel lblLoiGing = new JLabel("Loại giường:");
+			lblLoiGing.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+			lblLoiGing.setBounds(10, 105, 95, 21);
+			panel_InfoPhong.add(lblLoiGing);
+			
+			cb_LoaiGiuong.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+			cb_LoaiGiuong.setBounds(144, 105, 162, 22);
+			panel_InfoPhong.add(cb_LoaiGiuong);
+			cb_LoaiGiuong.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					updateHinhphong();
+				}
+			});
+			
+			JLabel lblGiTheoGi = new JLabel("Giá theo giờ:");
+			lblGiTheoGi.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+			lblGiTheoGi.setBounds(10, 145, 110, 21);
+			panel_InfoPhong.add(lblGiTheoGi);
+			
+			tfTheogio = new JTextField();
+			tfTheogio.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+			tfTheogio.setBounds(146, 138, 160, 21);
+			panel_InfoPhong.add(tfTheogio);
+			tfTheogio.setColumns(10);
+			
+			JLabel lblGiQuam = new JLabel("Giá qua đêm:");
+			lblGiQuam.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+			lblGiQuam.setBounds(10, 185, 110, 21);
+			panel_InfoPhong.add(lblGiQuam);
+			
+			tfQuadem.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+			tfQuadem.setColumns(10);
+			tfQuadem.setBounds(146, 178, 160, 21);
+			panel_InfoPhong.add(tfQuadem);
+			
+			JLabel lblGiTheoNgy = new JLabel("Giá theo ngày:");
+			lblGiTheoNgy.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+			lblGiTheoNgy.setBounds(10, 225, 110, 21);
+			panel_InfoPhong.add(lblGiTheoNgy);
+			
+			tfTheoNgay.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+			tfTheoNgay.setColumns(10);
+			tfTheoNgay.setBounds(146, 218, 160, 21);
+			panel_InfoPhong.add(tfTheoNgay);
+			
+			JLabel lblSNgiTi = new JLabel("Số người tối đa:");
+			lblSNgiTi.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+			lblSNgiTi.setBounds(10, 265, 126, 21);
+			panel_InfoPhong.add(lblSNgiTi);
+		
+			soNguoi.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+			soNguoi.setBounds(146, 265, 160, 21);
+			panel_InfoPhong.add(soNguoi);
+			
+			JButton btnThoat = new JButton("Thoát");
+			btnThoat.setIcon(new ImageIcon(UIDichvu.class.getResource("/images/back.png")));
+			btnThoat.setBounds(5, 560, 89, 23);
+			btnThoat.setFont(new Font("Times New Roman", Font.BOLD, 20));
+			getContentPane().add(btnThoat);
+			btnThoat.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					if(JOptionPane.showConfirmDialog(null,
+							"Bạn có thoát?", "Thoát", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+						dispose();
+				}
+			});
+			
+			if(action.equalsIgnoreCase("add")) {
+				JButton button = new JButton("Lưu");
+				button.setFont(new Font("Times New Roman", Font.BOLD, 20));
+				button.setHorizontalTextPosition(SwingConstants.LEADING);
+				button.setHorizontalAlignment(SwingConstants.LEADING);
+				button.setIcon(new ImageIcon(UIQLPhong.class.getResource("/images/add_room.png")));
+				button.setBounds(240, 560, 89, 23);
+				add(button);
+				button.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						if(isValidDataPhong() && JOptionPane.showConfirmDialog(null,
+							"Bạn có muốn thêm phòng?", "Thêm phòng", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+							them();
+					}
+				});
+			}else {
+				if(phong != null) {
+					maPhong = phong.getMaPhong();
+					lblMaPhong.setText(phong.getMaPhong());
+					lblsoPhong.setText(phong.getSoPhong());
+					cb_LoaiPhong.setSelectedItem(phong.getLoaiPhong().getTenLoaiphong());
+					cb_LoaiGiuong.setSelectedItem(phong.getGiuong().getLoaiGiuong());
+					tfQuadem.setText(Double.toString(phong.getGiaQuadem()));
+					tfTheogio.setText(Double.toString(phong.getGiaTheogio()));
+					tfTheoNgay.setText(Double.toString(phong.getGiaTheongay()));
+					soNguoi.setValue(phong.getSoNguoiToida());
+				}
+				if(action.equalsIgnoreCase("edit")) {
+					JButton button = new JButton("Sửa");
+					button.setFont(new Font("Times New Roman", Font.BOLD, 20));
+					button.setHorizontalTextPosition(SwingConstants.LEADING);
+					button.setHorizontalAlignment(SwingConstants.LEADING);
+					button.setIcon(new ImageIcon(UIQLPhong.class.getResource("/images/edit_room.png")));
+					button.setBounds(240, 560, 89, 23);
+					add(button);
+					button.addMouseListener(new MouseAdapter() {
+						@Override
+						public void mouseClicked(MouseEvent e) {
+							if(isValidDataPhong() && JOptionPane.showConfirmDialog(null,
+								"Bạn có muốn sửa phòng?", "Sửa phòng", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+								sua();
+						}
+					});
+				}else {
+					JButton button = new JButton("Xóa");
+					button.setFont(new Font("Times New Roman", Font.BOLD, 20));
+					button.setHorizontalTextPosition(SwingConstants.LEADING);
+					button.setHorizontalAlignment(SwingConstants.LEADING);
+					button.setIcon(new ImageIcon(UIQLPhong.class.getResource("/images/remove_room.png")));
+					button.setBounds(240, 560, 89, 23);
+					add(button);
+					button.addMouseListener(new MouseAdapter() {
+						@Override
+						public void mouseClicked(MouseEvent e) {
+							if(JOptionPane.showConfirmDialog(null,
+								"Bạn có muốn xóa phòng?", "Xóa phòng", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+								xoa();
+						}
+					});
+				}
+			}
+			updateHinhphong();
+		}
+		
+		public void them() {
+			phong = new Phong(maPhong,
+					loaiphongDAO.timLoaiPhongTheoTen(cb_LoaiPhong.getSelectedItem().toString()),
+					Double.parseDouble(tfTheogio.getText().trim()),
+					Double.parseDouble(tfQuadem.getText().trim()), 
+					Double.parseDouble(tfTheoNgay.getText().trim()), 
+					lblsoPhong.getText().trim(), 
+					giuongDAO.timTheoTen(cb_LoaiGiuong.getSelectedItem().toString()),
+					"Phòng trống",
+					Integer.parseInt(soNguoi.getValue().toString()));
+			if(phongDAO.themPhong(phong)) {
+				JOptionPane.showMessageDialog(null, "Thêm phòng thành công!!", "Thông báo", 1);
+				xuatDSPhong();
+				dispose();
+			}
+			else JOptionPane.showMessageDialog(null, "Thêm phòng không thành công!!", "Thông báo", 1);
+		}
+		
+		public void xoa() {
+			if(phongDAO.getDSPhong().indexOf(phong) == phongDAO.getDSPhong().size() - 1) {
+				if(phongDAO.xoaPhong(phong.getMaPhong())) {
+					JOptionPane.showMessageDialog(null, "Xóa phòng thành công!!", "Thông báo", 1);
+					xuatDSPhong();
+					dispose();
+				}
+				else JOptionPane.showMessageDialog(null, "Xóa phòng không thành công!!", "Thông báo", 1);
+			}else {
+				phong.setTinhtrangPhong("Deleted");
+				if(phongDAO.suaPhong(phong)) {
+					JOptionPane.showMessageDialog(null, "Xóa phòng thành công!!", "Thông báo", 1);
+					xuatDSPhong();
+					dispose();
+				}
+				else JOptionPane.showMessageDialog(null, "Xóa phòng không thành công!!", "Thông báo", 1);
+			}
+		}
+		
+		public void sua() {
+			phong = new Phong(maPhong,
+					loaiphongDAO.timLoaiPhongTheoTen(cb_LoaiPhong.getSelectedItem().toString()),
+					Double.parseDouble(tfTheogio.getText().trim()),
+					Double.parseDouble(tfQuadem.getText().trim()), 
+					Double.parseDouble(tfTheoNgay.getText().trim()), 
+					lblsoPhong.getText().trim(), 
+					giuongDAO.timTheoTen(cb_LoaiGiuong.getSelectedItem().toString()),
+					"Phòng trống",
+					Integer.parseInt(soNguoi.getValue().toString()));
+			if(phongDAO.suaPhong(phong)) {
+				JOptionPane.showMessageDialog(null, "Sửa phòng thành công!!", "Thông báo", 1);
+				xuatDSPhong();
+				dispose();
+			}
+			else JOptionPane.showMessageDialog(null, "Sửa phòng không thành công!!", "Thông báo", 1);
+		}
+		
+		public boolean isValidDataPhong() {
+			try {
+				Double.parseDouble(tfTheogio.getText().trim());
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(null, "Giá theo giờ phải là số thực!!", "Thông báo", 1);
+				return false;
+			}
+			try {
+				Double.parseDouble(tfQuadem.getText().trim());
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(null, "Giá theo giờ phải là số thực!!", "Thông báo", 1);
+				return false;
+			}
+			try {
+				Double.parseDouble(tfTheoNgay.getText().trim());
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(null, "Giá theo giờ phải là số thực!!", "Thông báo", 1);
+				return false;
+			}
+			return true;
+		}
+		
+		public void updateHinhphong() {
+			cb_LoaiGiuong.setEnabled(false);
+			if(cb_LoaiPhong.getSelectedItem().toString().equalsIgnoreCase("Phòng đơn")) {
+				lblHinh.setIcon(new ImageIcon(UIQLPhong.class.getResource("/images/phong/phongdon.jpg")));
+				soNguoi.setModel(new SpinnerNumberModel(2, 1, 8, 1));
+			}else if(cb_LoaiPhong.getSelectedItem().toString().equalsIgnoreCase("Phòng đôi")) {
+				cb_LoaiGiuong.setEnabled(true);
+				soNguoi.setModel(new SpinnerNumberModel(4, 1, 8, 1));
+				if(cb_LoaiGiuong.getSelectedItem().toString().equalsIgnoreCase("Một giường")) {
+					lblHinh.setIcon(new ImageIcon(UIQLPhong.class.getResource("/images/phong/phongdoi.jpg")));
+				}else {
+					lblHinh.setIcon(new ImageIcon(UIQLPhong.class.getResource("/images/phong/phongdoi2.PNG")));
+				}
+			}else {
+				lblHinh.setIcon(new ImageIcon(UIQLPhong.class.getResource("/images/phong/phongGD.jpg")));
+				soNguoi.setModel(new SpinnerNumberModel(8, 1, 8, 1));
+			}
 		}
 	}
 	
@@ -1056,14 +1897,26 @@ public class UIVinaHome extends JFrame {
 		private List<Phong> phongs;
 		private DatPhong datPhong;
 		
-		//TODO
 		public UIDatPhong(DatPhong datPhong, String action) {
 			super(new JFrame(),"Đặt phòng",true);
 			getContentPane().setBackground(Color.WHITE);
 			setBounds(0, 0, 735, 533);
 			setLocationRelativeTo(null);
 			getContentPane().setLayout(null);
-			
+			KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+				
+				@Override
+				public boolean dispatchKeyEvent(KeyEvent e) {
+					switch (e.getID()) {
+					  case KeyEvent.KEY_PRESSED:
+	                        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+	                            dispose();
+	                        }
+	                        break;
+					}
+					return false;
+				}
+			});
 			this.datPhong = datPhong;
 			dateChooser_nhan.setDateFormatString("dd/MM/yyyy");
 			dateChooser_tra.setDateFormatString("dd/MM/yyyy");
@@ -1265,8 +2118,6 @@ public class UIVinaHome extends JFrame {
 			cb_LoaiKH.setFont(new Font("Times New Roman", Font.BOLD, 18));
 			cb_LoaiKH.setBounds(106, 140, 95, 27);
 			panel_thongtinKH.add(cb_LoaiKH);
-			
-			
 			
 			JPanel panel_Diachi = new JPanel();
 			panel_Diachi.setBackground(Color.WHITE);
@@ -1485,8 +2336,14 @@ public class UIVinaHome extends JFrame {
 				JOptionPane.showMessageDialog(null, "Đặt phòng trùng!!");
 			}else {
 				if(datPhongDAO.themDatPhong(datPhong)) {
+					if(!dfloaithue.getSelectedItem().equals(loaithue[2]))
+						datPhong.getPhong().forEach(p -> {
+							p.setTinhtrangPhong("Đang thuê");
+							phongDAO.suaPhong(p);
+						});
 					JOptionPane.showMessageDialog(null, "Đặt phòng thành công!!");
 					updateTableDatPhong();
+					xuatDSPhong();
 					dispose();
 				}else {
 					JOptionPane.showMessageDialog(null, "Đặt phòng không thành công!!");
@@ -1545,6 +2402,7 @@ public class UIVinaHome extends JFrame {
 				if(datPhongDAO.suaDatPhong(datPhong)) {
 					JOptionPane.showMessageDialog(null, "Sửa đặt phòng thành công!!");
 					updateTableDatPhong();
+					xuatDSPhong();
 					dispose();
 				}else {
 					JOptionPane.showMessageDialog(null, "Sửa đặt phòng không thành công!!");
@@ -1555,8 +2413,13 @@ public class UIVinaHome extends JFrame {
 		
 		public void evHuyDatPhong() {
 			if(datPhongDAO.xoaDatPhong(datPhong.getMaDP())) {
+				datPhong.getPhong().forEach(p -> {
+					p.setTinhtrangPhong("Phòng trống");
+					phongDAO.suaPhong(p);
+				});
 				JOptionPane.showMessageDialog(null, "Hủy đặt phòng thành công!!");
 				updateTableDatPhong();
+				xuatDSPhong();
 				dispose();
 			}else {
 				JOptionPane.showMessageDialog(null, "Hủy đặt không thành công!!");
@@ -1584,18 +2447,20 @@ public class UIVinaHome extends JFrame {
 				public void mouseClicked(MouseEvent e) {
 					list_KhachHang.setVisible(false);
 					khachHang = khachhangDAO.timKHTheoDinhdang(list_KhachHang.getSelectedValue());
-					tfHoten.setText(khachHang.getTenKH());
-					tfHoten.requestFocus();
-					tfSoDT.setText(khachHang.getSoDT());
-					tfSoCMND.setText(khachHang.getSoCMD());
-					ngaysinh.setDate(java.sql.Date.valueOf(khachHang.getNgaySinh()));
-					dfLoaiKH.setSelectedItem(khachHang.getLoaiKH());
-					tfTinh.setText(khachHang.getDiaChi().getTinh());
-					tfQuan.setText(khachHang.getDiaChi().getQuan());
-					tfPhuong.setText(khachHang.getDiaChi().getPhuong());
-					tfDuong.setText(khachHang.getDiaChi().getDuong());
-					tfSonha.setText(khachHang.getDiaChi().getSoNha());
-					list_KhachHang.setVisible(false);
+					if(khachHang != null) {
+						tfHoten.setText(khachHang.getTenKH());
+						tfHoten.requestFocus();
+						tfSoDT.setText(khachHang.getSoDT());
+						tfSoCMND.setText(khachHang.getSoCMD());
+						ngaysinh.setDate(java.sql.Date.valueOf(khachHang.getNgaySinh()));
+						dfLoaiKH.setSelectedItem(khachHang.getLoaiKH());
+						tfTinh.setText(khachHang.getDiaChi().getTinh());
+						tfQuan.setText(khachHang.getDiaChi().getQuan());
+						tfPhuong.setText(khachHang.getDiaChi().getPhuong());
+						tfDuong.setText(khachHang.getDiaChi().getDuong());
+						tfSonha.setText(khachHang.getDiaChi().getSoNha());
+						list_KhachHang.setVisible(false);
+					}
 				}
 			});
 		}
@@ -1681,7 +2546,6 @@ public class UIVinaHome extends JFrame {
 		}
 	}
 	
-	//TODO
 	public void updateTableDatPhong(){
 		while(dfmodelDSDP.getRowCount() > 0)
 			dfmodelDSDP.removeRow(0);
@@ -1873,6 +2737,20 @@ public class UIVinaHome extends JFrame {
 			JPanel panelDichvu = new JPanel();
 			panelDichvu.setBackground(Color.WHITE);
 			getContentPane().add(panelDichvu, BorderLayout.CENTER);
+			KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+				
+				@Override
+				public boolean dispatchKeyEvent(KeyEvent e) {
+					switch (e.getID()) {
+					  case KeyEvent.KEY_PRESSED:
+	                        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+	                            dispose();
+	                        }
+	                        break;
+					}
+					return false;
+				}
+			});
 			
 			Box b, b1, b2;
 			tenLDV = new String[loaiDichvuDAO.getDSLoaiDichvu().size()];
@@ -2139,6 +3017,20 @@ public class UIVinaHome extends JFrame {
 			getContentPane().setLayout(new BorderLayout());
 			getContentPane().setBackground(Color.WHITE);
 			getContentPane().setLayout(null);
+			KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+				
+				@Override
+				public boolean dispatchKeyEvent(KeyEvent e) {
+					switch (e.getID()) {
+					  case KeyEvent.KEY_PRESSED:
+	                        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+	                            dispose();
+	                        }
+	                        break;
+					}
+					return false;
+				}
+			});
 			
 			JLabel lblMPhiuDch = new JLabel("Mã phiếu dịch vụ:");
 			lblMPhiuDch.setFont(new Font("Times New Roman", Font.PLAIN, 18));
@@ -2523,7 +3415,21 @@ public class UIVinaHome extends JFrame {
 			getContentPane().setBackground(Color.WHITE);
 			getContentPane().setLayout(null);
 			this.khachHang = khachHang;
-			
+			KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+				
+				@Override
+				public boolean dispatchKeyEvent(KeyEvent e) {
+					switch (e.getID()) {
+					  case KeyEvent.KEY_PRESSED:
+	                        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+	                            dispose();
+	                        }
+	                        break;
+					}
+					return false;
+				}
+			});
+
 			int valueMaKH = dsKH.size();
 			do {
 				valueMaKH++;
@@ -2651,10 +3557,14 @@ public class UIVinaHome extends JFrame {
 			tfSoCMND.setColumns(10);
 			tfSoCMND.setBounds(116, 119, 221, 25);
 			panel_thongtinKH.add(tfSoCMND);
+			
+			cb_LoaiKH.setFont(new Font("Times New Roman", Font.BOLD, 18));
+			cb_LoaiKH.setBounds(116, 155, 103, 22);
+			panel_thongtinKH.add(cb_LoaiKH);
 
 			ngaysinh.getSpinner().setFont(new Font("Times New Roman", Font.BOLD, 18));
 			ngaysinh.setDateFormatString("dd/MM/yyyy");
-			ngaysinh.setBounds(116, 155, 221, 21);
+			ngaysinh.setBounds(116, 191, 221, 21);
 			ngaysinh.getSpinner().addChangeListener(new ChangeListener() {
 				@SuppressWarnings("deprecation")
 				@Override
@@ -2666,10 +3576,6 @@ public class UIVinaHome extends JFrame {
 			});
 			panel_thongtinKH.add(ngaysinh);
 
-			cb_LoaiKH.setFont(new Font("Times New Roman", Font.BOLD, 18));
-			cb_LoaiKH.setBounds(116, 191, 103, 22);
-			panel_thongtinKH.add(cb_LoaiKH);
-			
 			JButton btnclear = new JButton("clear");
 			btnclear.setBounds(10, 433, 89, 25);
 			panel_thongtinKH.add(btnclear);
@@ -2934,6 +3840,20 @@ public class UIVinaHome extends JFrame {
 			getContentPane().setBackground(Color.WHITE);
 			getContentPane().setLayout(null);
 			this.nv = nv;
+			KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+				
+				@Override
+				public boolean dispatchKeyEvent(KeyEvent e) {
+					switch (e.getID()) {
+					  case KeyEvent.KEY_PRESSED:
+	                        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+	                            dispose();
+	                        }
+	                        break;
+					}
+					return false;
+				}
+			});
 			
 			JPanel panel_thongtinNV = new JPanel();
 			panel_thongtinNV.setBackground(Color.WHITE); 
@@ -3537,6 +4457,20 @@ public class UIVinaHome extends JFrame {
 			setLocationRelativeTo(null);
 			getContentPane().setLayout(new BorderLayout());
 			getContentPane().setBackground(Color.WHITE);
+			KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+				
+				@Override
+				public boolean dispatchKeyEvent(KeyEvent e) {
+					switch (e.getID()) {
+					  case KeyEvent.KEY_PRESSED:
+	                        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+	                            dispose();
+	                        }
+	                        break;
+					}
+					return false;
+				}
+			});
 			
 			JPanel PanelDoiMK = new JPanel();
 			PanelDoiMK.setBounds(0, 0, 410, 279);
@@ -3673,6 +4607,7 @@ public class UIVinaHome extends JFrame {
 						String[] strDays = new String[] {"Chủ nhật", "Thứ hai", "Thứ ba",
 								"Thứ tư", "Thứ năm", "Thứ sáu", "Thứ bảy"};
 						dateweek.setText(strDays[cal.get(Calendar.DAY_OF_WEEK) - 1]);
+						
 						sleep(1000);
 					}
 

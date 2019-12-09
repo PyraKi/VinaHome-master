@@ -16,4 +16,6 @@ public interface QLLoaiphongimp {
 
 	List<LoaiPhong> getDSLoaiPhong();
 
+	LoaiPhong timLoaiPhongTheoTen(String tenLP);
+
 }

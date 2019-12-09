@@ -16,4 +16,6 @@ public interface QLGiuongimp {
 
 	List<Giuong> getDSGiuong();
 
+	Giuong timTheoTen(String tenGiuong);
+
 }
