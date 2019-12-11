@@ -1,7 +1,5 @@
 package entity;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -22,12 +20,8 @@ public class ChitietHoadon {
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="maPhong")
 	private Phong phong;
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="maDP")
-	private DatPhong datPhong;
 	@OneToMany(fetch=FetchType.LAZY)
 	private List<PhieuDichvu> phieuDichvus;
-	private double phatsinh;
 	public String getMaCTHD() {
 		return maCTHD;
 	}
@@ -40,23 +34,20 @@ public class ChitietHoadon {
 	public void setPhong(Phong phong) {
 		this.phong = phong;
 	}
-	public DatPhong getDatPhong() {
-		return datPhong;
-	}
-	public void setDatPhong(DatPhong datPhong) {
-		this.datPhong = datPhong;
-	}
 	public List<PhieuDichvu> getPhieuDichvus() {
 		return phieuDichvus;
 	}
 	public void setPhieuDichvus(List<PhieuDichvu> phieuDichvus) {
 		this.phieuDichvus = phieuDichvus;
 	}
-	public double getPhatsinh() {
-		return phatsinh;
+	public ChitietHoadon(String maCTHD, Phong phong, List<PhieuDichvu> phieuDichvus) {
+		super();
+		this.maCTHD = maCTHD;
+		this.phong = phong;
+		this.phieuDichvus = phieuDichvus;
 	}
-	public void setPhatsinh(double phatsinh) {
-		this.phatsinh = phatsinh;
+	public ChitietHoadon() {
+		super();
 	}
 	@Override
 	public int hashCode() {
@@ -81,69 +72,15 @@ public class ChitietHoadon {
 			return false;
 		return true;
 	}
-	public ChitietHoadon(String maCTHD, Phong phong, DatPhong datPhong, List<PhieuDichvu> phieuDichvus,
-			double phatsinh) {
-		super();
-		this.maCTHD = maCTHD;
-		this.phong = phong;
-		this.datPhong = datPhong;
-		this.phieuDichvus = phieuDichvus;
-		this.phatsinh = phatsinh;
-	}
-	public ChitietHoadon() {
-		super();
-	}
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("ChitietHoadon [maCTHD=");
-		builder.append(maCTHD);
-		builder.append(", phong=");
-		builder.append(phong);
-		builder.append(", datPhong=");
-		builder.append(datPhong);
-		builder.append(", phieuDichvus=");
-		builder.append(phieuDichvus);
-		builder.append(", phatsinh=");
-		builder.append(phatsinh);
-		builder.append("]");
-		return builder.toString();
+		return "ChitietHoadon [maCTHD=" + maCTHD + ", phong=" + phong + ", phieuDichvus=" + phieuDichvus + "]";
 	}
-	
-	public double thanhTien() {
+	public double ThanhTien() {
 		double s = 0;
-		String loaithue = datPhong.getLoaiDatPhong();
-		
-		LocalDateTime fromDateTime = datPhong.getNhanPhong();
-		LocalDateTime toDateTime = LocalDateTime.now();
-
-		LocalDateTime tempDateTime = LocalDateTime.from(fromDateTime);
-
-		long months = tempDateTime.until( toDateTime, ChronoUnit.MONTHS);
-		tempDateTime = tempDateTime.plusMonths( months );
-		
-		long days = tempDateTime.until( toDateTime, ChronoUnit.DAYS);
-		tempDateTime = tempDateTime.plusDays( days );
-
-		long hours = tempDateTime.until( toDateTime, ChronoUnit.HOURS);
-		tempDateTime = tempDateTime.plusHours( hours );
-
-		long minutes = tempDateTime.until( toDateTime, ChronoUnit.MINUTES);
-		tempDateTime = tempDateTime.plusMinutes( minutes );
-		
-		if(loaithue.equalsIgnoreCase("Theo giờ")) {
-			if(minutes > 15)
-				hours++;
-			hours +=  days*24;
-			s = phong.getGiaTheogio();
-			for (int i = 1; i < hours; i++)
-				s += s*0.04;
-		}else if(loaithue.equalsIgnoreCase("Qua đêm")) {
-			s = phong.getGiaQuadem();
-		}else {
-			s = phong.getGiaTheongay() * (months*30 + days);
+		for (PhieuDichvu phieuDichvu : phieuDichvus) {
+			s += phieuDichvu.ThanhTien();
 		}
-		s += phatsinh;
 		return s;
 	}
 }

@@ -78,14 +78,16 @@ public class QLDatPhong implements QLDatPhongimp {
 	@Override
 	public boolean kiemTraTrung(DatPhong o) {
 		for (DatPhong datPhong : getDSDatPhong()) {
-			for(Phong pd : datPhong.getPhong()) {
-				for(Phong p : o.getPhong()) {
-					if(pd.getMaPhong().equals(p.getMaPhong())) {
-						if((datPhong.getNgayDatPhong().compareTo(o.getNgayDatPhong()) >=0 &&
-								datPhong.getNgayTraPhong().compareTo(o.getNgayDatPhong()) <=0) ||
-								(datPhong.getNgayDatPhong().compareTo(o.getNgayTraPhong()) >=0 &&
-								datPhong.getNgayTraPhong().compareTo(o.getNgayTraPhong()) <=0)) {
-							return true;
+			if(datPhong.getTinhTrang() != -1) {
+				for(Phong pd : datPhong.getPhongs()) {
+					for(Phong p : o.getPhongs()) {
+						if(pd.getMaPhong().equals(p.getMaPhong())) {
+							if((datPhong.getNgayDatPhong().compareTo(o.getNgayDatPhong()) >=0 &&
+									datPhong.getNgayTraPhong().compareTo(o.getNgayDatPhong()) <=0) ||
+									(datPhong.getNgayDatPhong().compareTo(o.getNgayTraPhong()) >=0 &&
+									datPhong.getNgayTraPhong().compareTo(o.getNgayTraPhong()) <=0)) {
+								return true;
+							}
 						}
 					}
 				}

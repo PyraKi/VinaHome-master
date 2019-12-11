@@ -31,6 +31,7 @@ public class DatPhong implements Comparable<DatPhong>{
 	private LocalDate ngayTraPhong;
 	private LocalTime gioTraPhong;
 	private LocalDateTime nhanPhong;
+	private int tinhTrang;
 	public String getMaDP() {
 		return maDP;
 	}
@@ -43,10 +44,10 @@ public class DatPhong implements Comparable<DatPhong>{
 	public void setKhachHang(KhachHang khachHang) {
 		this.khachHang = khachHang;
 	}
-	public List<Phong> getPhong() {
+	public List<Phong> getPhongs() {
 		return phongs;
 	}
-	public void setPhong(List<Phong> phongs) {
+	public void setPhongs(List<Phong> phongs) {
 		this.phongs = phongs;
 	}
 	public String getLoaiDatPhong() {
@@ -85,6 +86,12 @@ public class DatPhong implements Comparable<DatPhong>{
 	public void setNhanPhong(LocalDateTime nhanPhong) {
 		this.nhanPhong = nhanPhong;
 	}
+	public int getTinhTrang() {
+		return tinhTrang;
+	}
+	public void setTinhTrang(int tinhTrang) {
+		this.tinhTrang = tinhTrang;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -109,7 +116,8 @@ public class DatPhong implements Comparable<DatPhong>{
 		return true;
 	}
 	public DatPhong(String maDP, KhachHang khachHang, List<Phong> phongs, String loaiDatPhong, LocalDate ngayDatPhong,
-			LocalTime gioDatPhong, LocalDate ngayTraPhong, LocalTime gioTraPhong, LocalDateTime nhanPhong) {
+			LocalTime gioDatPhong, LocalDate ngayTraPhong, LocalTime gioTraPhong, LocalDateTime nhanPhong,
+			int tinhTrang) {
 		super();
 		this.maDP = maDP;
 		this.khachHang = khachHang;
@@ -120,6 +128,7 @@ public class DatPhong implements Comparable<DatPhong>{
 		this.ngayTraPhong = ngayTraPhong;
 		this.gioTraPhong = gioTraPhong;
 		this.nhanPhong = nhanPhong;
+		this.tinhTrang = tinhTrang;
 	}
 	public DatPhong() {
 		super();
@@ -147,6 +156,8 @@ public class DatPhong implements Comparable<DatPhong>{
 		builder.append(gioTraPhong);
 		builder.append(", nhanPhong=");
 		builder.append(nhanPhong);
+		builder.append(", tinhTrang=");
+		builder.append(tinhTrang);
 		builder.append("]");
 		return builder.toString();
 	}
